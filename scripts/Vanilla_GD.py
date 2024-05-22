@@ -1,15 +1,12 @@
 # pylint: disable=all
 import argparse
-
-import pandas as pd
-from azureml.core import Run
-from codai_machinery.arguments_parser import parse_and_log_script_arguments
 import os
 
 import numpy as np
+import pandas as pd
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.pyadm1.basic_classes import (load_dig_feed, load_dig_info,
-                                       load_dig_state, load_dig_states)
+                                            load_dig_state, load_dig_states)
 from surpbayes.pyadm1.digester import Digester
 from surpbayes.pyadm1.proba import Interface, prior_param, proba_map
 from surpbayes.types import ProbaParam
