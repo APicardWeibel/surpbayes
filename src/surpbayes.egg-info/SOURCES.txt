@@ -1,0 +1,7 @@
+setup.py
+surpbayes/__init__.py
+surpbayes.egg-info/PKG-INFO
+surpbayes.egg-info/SOURCES.txt
+surpbayes.egg-info/dependency_links.txt
+surpbayes.egg-info/requires.txt
+surpbayes.egg-info/top_level.txt
