@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from surpbayes.bayes.optim_result_vi import OptimResultVI
+from surpbayes.bayes.optim_result_bayes import OptimResultBayes
 from surpbayes.bayes.score_approx.weighing import (
     get_weights_mc,
     get_weights_mc_gauss,
@@ -9,14 +9,14 @@ from surpbayes.bayes.score_approx.weighing import (
 
 
 def plot_weight_per_gen(
-    opt_res: OptimResultVI,
+    opt_res: OptimResultBayes,
     *args,
     n_sample_estim_weight: int = 10**5,
     plot=plt,
     **kwargs
 ):
     """Plot evolution of weight per generation"""
-    proba_map = opt_res.log_vi.proba_map
+    proba_map = opt_res.log_bayes.proba_map
     is_gauss = proba_map.map_type == "Gaussian"
     proba = proba_map(opt_res.opti_param)
 
@@ -44,8 +44,8 @@ def plot_weight_per_gen(
     return plot
 
 
-def plot_weights_per_gen(opt_res: OptimResultVI, n_sample_estim_weight: int = 10**5):
-    proba_map = opt_res.log_vi.proba_map
+def plot_weights_per_gen(opt_res: OptimResultBayes, n_sample_estim_weight: int = 10**5):
+    proba_map = opt_res.log_bayes.proba_map
     is_gauss = proba_map.map_type == "Gaussian"
     proba = proba_map(opt_res.opti_param)
 

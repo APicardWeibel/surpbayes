@@ -3,7 +3,7 @@ from typing import Callable, Optional, Union
 import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.bayes.bayes_solver import BayesSolver
-from surpbayes.bayes.optim_result_vi import OptimResultVI
+from surpbayes.bayes.optim_result_bayes import OptimResultBayes
 # from surpbayes.bayes.score_approx._helper import set_up_per_step
 from surpbayes.bayes.score_approx.accu_sample_exp import (AccuSampleValExp,
                                                      _add_T_data)
@@ -518,15 +518,15 @@ class ScoreApproxBayesSolver(BayesSolver):
         if self.parallel:
             self.pool.close()
 
-    def process_result(self) -> OptimResultVI:
-        """Return solver result as an OptimResultVI"""
-        return OptimResultVI(
+    def process_result(self) -> OptimResultBayes:
+        """Return solver result as an OptimResultBayes"""
+        return OptimResultBayes(
             opti_param=self._post_param,
             converged=self.converged,
-            opti_score=self.hist_log.VI_scores(1)[0],
+            opti_score=self.hist_log.bayes_scores(1)[0],
             hist_param=self.hist_log.proba_pars(),
-            hist_score=self.hist_log.VI_scores(),
+            hist_score=self.hist_log.bayes_scores(),
             end_param=self._post_param,
-            log_vi=self.hist_log,
+            log_bayes=self.hist_log,
             sample_val=self.accu,
         )

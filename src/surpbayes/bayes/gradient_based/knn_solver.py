@@ -102,13 +102,13 @@ class KNNBayesSolver(GradientBasedBayesSolver):
         # Store new sample
         self.accu.add(sample, vals)  # type: ignore
 
-    def check_bad_grad(self, score_VI:float, UQ:float):
+    def check_bad_grad(self, pbayes_obj:float, score_UQ:float):
         """ Check if Bad gradient"""
-        is_bad = score_VI > self.prev_score
+        is_bad = pbayes_obj > self.prev_score
         if is_bad:
             blab(
                 self.silent,
-                f"Undo last step (last score {self.prev_score}, new score {score_VI})",
+                f"Undo last step (last score {self.prev_score}, new score {pbayes_obj})",
             )
         return is_bad
 

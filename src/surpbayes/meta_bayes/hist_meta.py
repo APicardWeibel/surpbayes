@@ -6,7 +6,7 @@ import os
 from typing import Optional, Sequence
 
 import numpy as np
-from surpbayes.bayes.hist_vi import FullMemory, check_shape
+from surpbayes.bayes.hist_bayes import FullMemory, check_shape
 from surpbayes.misc import prod
 from surpbayes.types import ProbaParam
 

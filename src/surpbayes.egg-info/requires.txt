@@ -1,11 +1,11 @@
 pandas>=1.1.5
+numpy
 streamlit
 scikit-learn>=0.24.2
-azureml-core<=1.50
-azureml-pipeline-steps<=1.50
-azureml-pipeline<=1.50
-azureml-dataset-runtime<=1.50
-altair<5
+matplotlib
+seaborn
+dill
+multiprocess
 
 [check]
 black>=20.8b1

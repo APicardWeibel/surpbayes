@@ -1,5 +1,5 @@
 """
-HistLogVI class
+HistBayesLog class
 
 Macro information on the evolution of a VarBUQ task
 """
@@ -18,17 +18,17 @@ class FullMemory(Exception):
     """Custom Error raised when trying to store memory to an already full memory manager"""
 
 
-class HistVILog:
+class HistBayesLog:
     r"""
     Manages the high level history of a PAC Bayesian optimisation problem of form
 
-    $$S_{VI}(\theta) = E_{p(\theta)}[score] + C kl(p(\theta), p0).$$
+    $$PB_{Cat}(\theta) = E_{p(\theta)}[score] + C kl(p(\theta), p0).$$
     where $E_{p(\theta)}[score]$ is the expected value (or mean) of the score of the probability
     distribution $p(\theta)$.
 
     Stored data can be accessed through methods:
         proba_pars ($\theta$),
-        VI_scores ($S_{VI}(\theta)$),
+        bayes_scores ($PB_{Cat}(\theta)$),
         KLs ($kl(p(\theta), p0)$),
         means ($E_{p(\theta)}[score]$)
     which take as input a number of data (optional, if None returns all data)
@@ -47,7 +47,7 @@ class HistVILog:
 
         # Prepare memory
         self._proba_pars = np.zeros((n,) + proba_map.proba_param_shape)
-        self._VI_scores = np.zeros(n)
+        self._bayes_scores = np.zeros(n)
         self._KLs = np.zeros(n)
         self._means = np.zeros(n)
 
@@ -104,7 +104,7 @@ class HistVILog:
         n = min(n, self._n - n0)
 
         self._proba_pars[n0 : (n0 + n)] = proba_pars
-        self._VI_scores[n0 : (n0 + n)] = scores
+        self._bayes_scores[n0 : (n0 + n)] = scores
         self._KLs[n0 : (n0 + n)] = KLs
         self._means[n0 : (n0 + n)] = means
 
@@ -119,7 +119,7 @@ class HistVILog:
         try:
             n = self._n_filled
             self._proba_pars[n] = proba_par
-            self._VI_scores[n] = score
+            self._bayes_scores[n] = score
             self._KLs[n] = KL
             self._means[n] = mean
 
@@ -133,7 +133,7 @@ class HistVILog:
         """
         Outputs the description of the last k elements added to the memory
         """
-        return self.proba_pars(k), self.VI_scores(k), self.KLs(k), self.means(k)
+        return self.proba_pars(k), self.bayes_scores(k), self.KLs(k), self.means(k)
 
     def get_all(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         return self.get(self._n_filled)
@@ -145,7 +145,7 @@ class HistVILog:
         To all purposes, deletes the k last inputs and returns the deleted inputs.
         """
         self._n_filled = max(0, self._n_filled - k)
-        return self.proba_pars(k), self.VI_scores(k), self.KLs(k), self.means(k)
+        return self.proba_pars(k), self.bayes_scores(k), self.KLs(k), self.means(k)
 
     def proba_pars(self, k: Optional[int] = None) -> np.ndarray:
         """
@@ -160,9 +160,9 @@ class HistVILog:
 
         return self._proba_pars[init : self._n_filled]
 
-    def VI_scores(self, k: Optional[int] = None) -> np.ndarray:
+    def bayes_scores(self, k: Optional[int] = None) -> np.ndarray:
         """
-        Outputs the last VI scores (last element is last score)
+        Outputs the last PAC-Bayes objective (last element is PAC-Bayes objective)
         """
 
         if k is None:
@@ -170,7 +170,7 @@ class HistVILog:
         else:
             init = max(0, self._n_filled - k)
 
-        return self._VI_scores[init : self._n_filled]
+        return self._bayes_scores[init : self._n_filled]
 
     def KLs(self, k: Optional[int] = None) -> np.ndarray:
         """
@@ -200,7 +200,7 @@ class HistVILog:
         if self._n_filled == 0:
             raise ValueError("Empty history")
 
-        pars, scores = self.proba_pars(), self.VI_scores()
+        pars, scores = self.proba_pars(), self.bayes_scores()
 
         best_ind = np.nanargmin(scores)
         return pars[best_ind], scores[best_ind]
@@ -211,12 +211,12 @@ class HistVILog:
         acc_path = os.path.join(path, name)
         os.makedirs(acc_path, exist_ok=overwrite)
 
-        proba_pars, VI_scores, KLs, means = self.get_all()
+        proba_pars, bayes_scores, KLs, means = self.get_all()
         flat_shape = (proba_pars.shape[0], prod(proba_pars.shape[1:]))
         np.savetxt(
             os.path.join(acc_path, "proba_pars.csv"), proba_pars.reshape(flat_shape)
         )
-        np.savetxt(os.path.join(acc_path, "VI_scores.csv"), VI_scores)
+        np.savetxt(os.path.join(acc_path, "bayes_scores.csv"), bayes_scores)
         np.savetxt(os.path.join(acc_path, "KLs.csv"), KLs)
         np.savetxt(os.path.join(acc_path, "means.csv"), means)
 
@@ -225,15 +225,15 @@ class HistVILog:
         return acc_path
 
 
-def load_hist_vi(path: str) -> HistVILog:
-    """Load a HistVILog from saved file"""
+def load_hist_bayes(path: str) -> HistBayesLog:
+    """Load a HistBayesLog from saved file"""
     # Check folder existence
     if not os.path.isdir(path):
         raise ValueError(f"{path} should point to a folder")
 
     # Load data
     proba_pars = np.loadtxt(os.path.join(path, "proba_pars.csv"))
-    VI_scores = np.loadtxt(os.path.join(path, "VI_scores.csv"))
+    bayes_scores = np.loadtxt(os.path.join(path, "bayes_scores.csv"))
     KLs = np.loadtxt(os.path.join(path, "KLs.csv"))
     means = np.loadtxt(os.path.join(path, "means.csv"))
 
@@ -245,6 +245,6 @@ def load_hist_vi(path: str) -> HistVILog:
     proba_pars = proba_pars.reshape(proba_pars.shape[:1] + proba_map.proba_param_shape)
 
     n = len(proba_pars)
-    hist = HistVILog(proba_map, n)
-    hist.add(proba_pars, VI_scores, KLs, means)  # type: ignore
+    hist = HistBayesLog(proba_map, n)
+    hist.add(proba_pars, bayes_scores, KLs, means)  # type: ignore
     return hist

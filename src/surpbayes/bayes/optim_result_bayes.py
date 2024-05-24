@@ -3,22 +3,22 @@ from typing import Optional, Sequence
 
 import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes.hist_vi import HistVILog
+from surpbayes.bayes.hist_bayes import HistBayesLog
 from surpbayes.optim import OptimResult
 from surpbayes.types import ProbaParam
 
 
-class OptimResultVI(OptimResult):
+class OptimResultBayes(OptimResult):
     """
     Inherited from OptimResult.
 
     Added fields:
         - end_param
-        - log_vi
+        - log_bayes
         - sample_val
     """
 
-    class_name = "OptimResultVI"
+    class_name = "OptimResultBayes"
 
     def __init__(
         self,
@@ -28,7 +28,7 @@ class OptimResultVI(OptimResult):
         hist_param: Sequence[ProbaParam],
         hist_score: Sequence[float],
         end_param: ProbaParam,
-        log_vi: HistVILog,
+        log_bayes: HistBayesLog,
         sample_val: AccuSampleVal,
         hyperparams: Optional[dict] = None,
     ):
@@ -41,7 +41,7 @@ class OptimResultVI(OptimResult):
             hyperparams=hyperparams,
         )
         self._end_param = end_param
-        self._log_vi = log_vi
+        self._log_bayes = log_bayes
         self._sample_val = sample_val
 
     @property
@@ -49,8 +49,8 @@ class OptimResultVI(OptimResult):
         return self._end_param
 
     @property
-    def log_vi(self):
-        return self._log_vi
+    def log_bayes(self):
+        return self._log_bayes
 
     @property
     def sample_val(self):
@@ -65,5 +65,5 @@ class OptimResultVI(OptimResult):
         (self._sample_val).save(
             name="sample_val", path=acc_path, overwrite=overwrite
         )  # mypy: ignore-errors
-        (self._log_vi).save(name="log_vi", path=acc_path, overwrite=overwrite)
+        (self._log_bayes).save(name="log_bayes", path=acc_path, overwrite=overwrite)
         return acc_path

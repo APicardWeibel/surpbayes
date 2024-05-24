@@ -11,8 +11,9 @@ from scipy.stats import norm
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.bayes.bayes_solver import BayesSolver
 from surpbayes.bayes.gradient_based.accu_sample_dens import AccuSampleValDens
-from surpbayes.bayes.gradient_based.optim_result_vi_gb import OptimResultVIGB
-from surpbayes.bayes.hist_vi import HistVILog
+from surpbayes.bayes.gradient_based.optim_result_bayes_gb import \
+    OptimResultBayesGB
+from surpbayes.bayes.hist_bayes import HistBayesLog
 from surpbayes.misc import blab, par_eval, prod
 from surpbayes.proba import Proba, ProbaMap
 from surpbayes.types import ProbaParam, SamplePoint, Samples
@@ -136,8 +137,8 @@ class GDBayesSolver(BayesSolver):
         grad_kl, kl = self.grad_kl(self._post_param, self.n_grad_kl)
 
         step = - self.eta * (grad_expct + self.temperature * grad_kl)
-        score_VI = mval + self.temperature * kl
-        self.hist_log.add1(proba_par=self._post_param, score=score_VI, KL=kl, mean=mval)
+        pbayes_obj = mval + self.temperature * kl
+        self.hist_log.add1(proba_par=self._post_param, score=pbayes_obj, KL=kl, mean=mval)
 
         new_post_param = self._post_param + step
         self.check_convergence(new_post_param)
@@ -227,8 +228,8 @@ class GradientBasedBayesSolver(GDBayesSolver):
         self.v = np.zeros(self.proba_map.proba_param_shape)
 
         self.prev_score = np.inf
-        self.bin_log = HistVILog(proba_map, n=chain_length)
-        self.all_log_vi = HistVILog(proba_map, n=chain_length)
+        self.bin_log = HistBayesLog(proba_map, n=chain_length)
+        self.all_log_bayes = HistBayesLog(proba_map, n=chain_length)
         
         self.k = k
         self.corr_eta = corr_eta
@@ -276,14 +277,14 @@ class GradientBasedBayesSolver(GDBayesSolver):
         self.accu.add(sample, l_dens, vals)
         self.stable_accu.add(sample, vals)
 
-    def check_bad_grad(self, score_VI, score_UQ):
+    def check_bad_grad(self, pbayes_obj, score_UQ):
         """Checks if the score update lead to a bad"""
-        is_bad = score_VI - self.prev_score > self.refuse_factor * score_UQ
+        is_bad = pbayes_obj - self.prev_score > self.refuse_factor * score_UQ
         if is_bad:
             warnings.warn(
                 f"""
             Harmful step removed.
-            (Previous score: {self.prev_score}, new_score: {score_VI}, UQ: {score_UQ}))""",
+            (Previous score: {self.prev_score}, new_score: {pbayes_obj}, UQ: {score_UQ}))""",
                 category=ProbBadGrad,
             )
         return is_bad
@@ -312,9 +313,9 @@ class GradientBasedBayesSolver(GDBayesSolver):
         der_score, m_score, score_UQ = self.get_score_grad()
         der_KL, kl = self.grad_kl(self._post_param, self.n_grad_kl)
 
-        score_VI = m_score + self.temperature * kl
+        pbayes_obj = m_score + self.temperature * kl
 
-        if self.check_bad_grad(score_VI, score_UQ):
+        if self.check_bad_grad(pbayes_obj, score_UQ):
 
             self.v = np.zeros(self.proba_map.proba_param_shape)
             self.eta = self.eta * self.corr_eta
@@ -326,7 +327,7 @@ class GradientBasedBayesSolver(GDBayesSolver):
             try:
                 self._post_param = self.hist_log.proba_pars()[-1]
                 self._post = self.proba_map(self._post_param)  # type: ignore
-                self.prev_score = self.hist_log.VI_scores()[-1]
+                self.prev_score = self.hist_log.bayes_scores()[-1]
             except IndexError:
                 # If the above fails, means back to the beginning (no previous data logged)
                 # Set previous score to infinity
@@ -335,7 +336,7 @@ class GradientBasedBayesSolver(GDBayesSolver):
                 self.prev_score = np.inf
 
         else:
-            self.hist_log.add1(proba_par=self._post_param, score=score_VI, KL=kl, mean=m_score)  # type: ignore
+            self.hist_log.add1(proba_par=self._post_param, score=pbayes_obj, KL=kl, mean=m_score)  # type: ignore
 
             v_new = -self.eta * (der_score + self.temperature * der_KL)
             v_new_flat = v_new.flatten()
@@ -347,7 +348,7 @@ class GradientBasedBayesSolver(GDBayesSolver):
             self.check_convergence(new_post_param)
 
             self._post_param = new_post_param
-            self.prev_score = score_VI
+            self.prev_score = pbayes_obj
             self._post = self.proba_map(self._post_param)
 
         self.count += 1
@@ -359,15 +360,15 @@ class GradientBasedBayesSolver(GDBayesSolver):
         except IndexError:
             print(f"No score assessed at step {self.count}")
 
-    def process_result(self) -> OptimResultVIGB:
-        return OptimResultVIGB(
+    def process_result(self) -> OptimResultBayesGB:
+        return OptimResultBayesGB(
             opti_param=self._post_param,
             converged=self.converged,
-            opti_score=self.hist_log.VI_scores(1)[0],
+            opti_score=self.hist_log.bayes_scores(1)[0],
             hist_param=self.hist_log.proba_pars(),
-            hist_score=self.hist_log.VI_scores(),
+            hist_score=self.hist_log.bayes_scores(),
             end_param=self._post_param,
-            log_vi=self.hist_log,
-            bin_log_vi=self.bin_log,
+            log_bayes=self.hist_log,
+            bin_log_bayes=self.bin_log,
             sample_val=self.accu,
         )

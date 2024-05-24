@@ -1,21 +1,21 @@
+"""
+Function form for PAC Bayes minimisation, with solver inference.
+"""
+
+
 from typing import Callable, Optional, Type, Union
 
 import numpy as np
-
 from surpbayes.bayes.bayes_solver import BayesSolver
-from surpbayes.bayes.gradient_based import (
-    GradientBasedBayesSolver,
-    KNNBayesSolver,
-)
-from surpbayes.bayes.optim_result_vi import OptimResultVI
-from surpbayes.bayes.score_approx import (
-    GaussianSABS,
-    PreExpSABS,
-    ScoreApproxBayesSolver,
-)
+from surpbayes.bayes.gradient_based import (GradientBasedBayesSolver,
+                                            KNNBayesSolver)
+from surpbayes.bayes.optim_result_bayes import OptimResultBayes
+from surpbayes.bayes.score_approx import (GaussianSABS, PreExpSABS,
+                                          ScoreApproxBayesSolver)
 from surpbayes.proba import ProbaMap
+from surpbayes.types import ProbaParam
 
-set_VI_method = {
+set_pac_bayes_solver = {
     "corr_weights",
     "knn",
     "score_approx",
@@ -25,12 +25,12 @@ set_VI_method = {
 }
 
 
-def infer_VI_routine(
-    proba_map: ProbaMap, VI_method: Optional[Union[str, Type[BayesSolver]]] = None
+def infer_pb_routine(
+    proba_map: ProbaMap, pac_bayes_solver: Optional[Union[str, Type[BayesSolver]]] = None
 ) -> Type[BayesSolver]:
-    """Infer which VI_method from 'proba_map' and 'VI_method' arguments.
+    """Infer which pac_bayes_solver from 'proba_map' and 'pac_bayes_solver' arguments.
 
-    Check Coherence between 'VI_method' and 'proba_map'.
+    Check Coherence between 'pac_bayes_solver' and 'proba_map'.
 
     Rules:
         If None, defaults to 'corr_weights' for generic distribution and the adequate
@@ -39,70 +39,87 @@ def infer_VI_routine(
         If 'score_approx', checks the appropriate version of 'score_approx' depending on the
         'proba_map' passed.
     """
-    if (VI_method is None) or (VI_method == "score_approx"):
+    if (pac_bayes_solver is None) or (pac_bayes_solver == "score_approx"):
         if proba_map.map_type == "Gaussian":
             return GaussianSABS
         if proba_map.map_type == "PreExpFamily":
             return PreExpSABS
         if proba_map.map_type == "ExponentialFamily":
             return ScoreApproxBayesSolver
-        if VI_method is None:
+        if pac_bayes_solver is None:
             return GradientBasedBayesSolver
 
         raise ValueError(
             "'score_approx' can only be used for Gaussian, Block diagonal Gaussian or Exponential Families"
         )
-    elif isinstance(VI_method, str):
-        if VI_method == "score_approx_gauss":
+    elif isinstance(pac_bayes_solver, str):
+        if pac_bayes_solver == "score_approx_gauss":
             if proba_map.map_type != "Gaussian":
                 raise ValueError(
                     "'score_approx_gauss' can only be used for 'GaussianMap', 'BlockDiagGaussMap', 'FactCovGaussianMap', 'FixedCovGaussianMap' or 'TensorizedGaussianMap'"
                 )
             return GaussianSABS
 
-        elif VI_method == "score_approx_pre_exp":
+        elif pac_bayes_solver == "score_approx_pre_exp":
             if proba_map.map_type != "PreExpFamily":
                 raise ValueError(
                     "score_approx_pre_exp can only be used for PreExpFamily"
                 )
             return PreExpSABS
 
-        elif VI_method == "score_approx_exp":
+        elif pac_bayes_solver == "score_approx_exp":
             if proba_map.map_type != "ExponentialFamily":
                 raise ValueError(
                     "score_approx_exp can only be used for ExponentialFamily"
                 )
             return ScoreApproxBayesSolver
 
-        elif VI_method == "corr_weights":
+        elif pac_bayes_solver == "corr_weights":
             return GradientBasedBayesSolver
-        elif VI_method == "knn":
+        elif pac_bayes_solver == "knn":
             return KNNBayesSolver
 
         else:
             raise ValueError(
-                f"'VI_method' must be one of {set_VI_method} (value {VI_method})"
+                f"'pac_bayes_solver' must be one of {set_pac_bayes_solver} (value {pac_bayes_solver})"
             )
 
     else:
-        return VI_method
+        return pac_bayes_solver
 
 
-def variational_inference(
+def pacbayes_minimize(
     fun: Callable[[np.ndarray], float],
     proba_map: ProbaMap,
     temperature: float,
+    prior_param: Optional[ProbaParam] = None,
     optimizer: Optional[Union[str, type[BayesSolver]]] = None,
     parallel: bool = True,
     vectorized: bool = False,
     **kwargs,
-) -> OptimResultVI:
+) -> OptimResultBayes:
+    """ Perform the minimization of Catoni's PAC-Bayes bound.
+    Method used to perform the minimisation can be user specified or
+    inferred from the type of proba_map.
 
-    Optim = infer_VI_routine(proba_map=proba_map, VI_method=optimizer)
+    Args:
+        fun: empirical risk function
+        proba_map: ProbaMap object, space on which the minimization is performed
+        temperature: PAC-Bayes temperature (the higher, the closer the posterior will be to the prior)
+        optimizer: Optimizer class used to minimize Catoni's bound.
+            "score_approx", "score_approx_gauss", "score_approx_pre_exp", "corr_weights", "knn" are
+            also valid argument names and recognized. Default is None (inferred from proba_map).
+        parallel: whether fun calls should be parallelized or not. Default is True.
+        vectorized: whether fun is vectorized. Default is False. If True, parallelisation is deactivated.
+    kwargs are passed to the optimizer (and uncaught kwargs passed to fun).
+    """
+
+    Optim = infer_pb_routine(proba_map=proba_map, pac_bayes_solver=optimizer)
 
     optim = Optim(
         fun=fun,
         proba_map=proba_map,
+        prior_param=prior_param,
         temperature=temperature,
         parallel=parallel,
         vectorized=vectorized,

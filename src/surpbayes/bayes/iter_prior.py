@@ -3,7 +3,7 @@ Iter prior algorithm, inspired by A. Leurent and R. Moscoviz (https://doi.org/10
 
 - OptimResultPriorIter subclass of OptimResult for iter_prior function
 - iter_prior function
-- iter_prior_vi, adaptation of iter_prior for Gaussian Variational problem
+- iter_prior_bayes, adaptation of iter_prior for minimisation of PAC-Bayes bound over Gaussian.
 """
 
 import os
@@ -217,7 +217,7 @@ def iter_prior(
     )
 
 
-def iter_prior_vi(
+def iter_prior_bayes(
     score_fun: Callable[[np.ndarray], float],
     prior_param: np.ndarray,
     temperature: float = 0.0,
@@ -234,13 +234,13 @@ def iter_prior_vi(
 ) -> OptimResultPriorIter:
     """
     Prior iteration joint Calibration and Uncertainty quantification routine.
-    This is mainly thought as a jump-start procedure for variational inference methods
+    This is mainly thought as a jump-start procedure for pac-bayes minimisation
 
     Given a score function and a starting prior as a tensorized gaussian distribution,
     updates the prior by iteratively:
         - drawing samples from it,
         - fiting a new distribution from the k-best samples found so far
-    Stops if the variational inference criteria stops decreasing.
+    Stops if the PAC-Bayes objective stops decreasing.
 
     The probability distribution is fitted by computing the mean and standard deviation of the best
     parameters, keeping "keep" of them. If less than keep samples where drawn so far, the prior is

@@ -9,7 +9,7 @@ TODO:
 from typing import Callable
 
 import numpy as np
-from surpbayes.bayes import variational_inference
+from surpbayes.bayes import pacbayes_minimize
 from surpbayes.meta_bayes.hist_meta import HistMeta
 from surpbayes.meta_bayes.meta_env import MetaLearningEnv
 from surpbayes.meta_bayes.task import Task
@@ -19,7 +19,7 @@ from surpbayes.types import MetaData, MetaParam, ProbaParam
 
 
 class CondMetaEnv(MetaLearningEnv):
-    r"""Conditional Meta Learning environnement for Variational Catoni Pac Bayes
+    r"""Conditional Meta Learning environnement for minimisation of Catoni Pac Bayes bound
 
     For a collection of task, meta learns a suitable map from metadata to prior.
 
@@ -84,7 +84,7 @@ class CondMetaEnv(MetaLearningEnv):
             cond_map (Callable): map task meta data and meta parameter to a ProbaParam
             der_cond_map (Callable): derivative of cond_map with respect to the meta parameter
             meta_param (MetaParam): initial Meta parameter value.
-            **hyperparams (dict): further arguments passed to variational_inference (inner
+            **hyperparams (dict): further arguments passed to pacbayes_minimize (inner
                 learning algorithm).
         """
         super().__init__(proba_map=proba_map, list_task=list_task, **hyperparams)
@@ -107,17 +107,17 @@ class CondMetaEnv(MetaLearningEnv):
 
         Posterior and the accu sample val are update in place in the task.
 
-        The inner algorithm called is 'aduq.bayes.variational_inference.' The routine used depends
+        The inner algorithm called is 'aduq.bayes.pacbayes_minimize.' The routine used depends
         on the proba_map and hyperparams attributes of the learning environnement (pre inferred
         at construction time).
 
-        The 'accu_sample_val' field of the task is indirectly augmented by variational_inference.
+        The 'accu_sample_val' field of the task is indirectly augmented by pacbayes_minimize.
         """
         # Infer the prior_param from the conditional mapping with meta_param
         prior_param = self.cond_map(self.meta_param, task.meta_data)
 
         # Perform the inner algorithm
-        opt_res = variational_inference(
+        opt_res = pacbayes_minimize(
             fun=task.score,
             proba_map=self.proba_map,
             prior_param=prior_param,

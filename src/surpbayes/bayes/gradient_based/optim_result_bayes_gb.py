@@ -1,22 +1,22 @@
-""" Inherited class of OptimResultVI for gradient based VI algorithm"""
+""" Inherited class of OptimResultBayes for gradient based VI algorithm"""
 
 from typing import Optional, Sequence
 
-from surpbayes.types import ProbaParam
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes.hist_vi import HistVILog
-from surpbayes.bayes.optim_result_vi import OptimResultVI
+from surpbayes.bayes.hist_bayes import HistBayesLog
+from surpbayes.bayes.optim_result_bayes import OptimResultBayes
+from surpbayes.types import ProbaParam
 
 
-class OptimResultVIGB(OptimResultVI):
+class OptimResultBayesGB(OptimResultBayes):
     """
-    Inherited from OptimResultVI
+    Inherited from OptimResultBayes
 
     Added fields:
-        - bin_log_vi
+        - bin_log_bayes
     """
 
-    class_name = "OptimResultVIGB"
+    class_name = "OptimResultBayesGB"
 
     def __init__(
         self,
@@ -26,8 +26,8 @@ class OptimResultVIGB(OptimResultVI):
         hist_param: Sequence[ProbaParam],
         hist_score: Sequence[float],
         end_param: ProbaParam,
-        log_vi: HistVILog,
-        bin_log_vi: HistVILog,
+        log_bayes: HistBayesLog,
+        bin_log_bayes: HistBayesLog,
         sample_val: AccuSampleVal,
         hyperparams: Optional[dict] = None,
     ):
@@ -38,22 +38,22 @@ class OptimResultVIGB(OptimResultVI):
             hist_param=hist_param,
             hist_score=hist_score,
             end_param=end_param,
-            log_vi=log_vi,
+            log_bayes=log_bayes,
             sample_val=sample_val,
             hyperparams=hyperparams,
         )
-        self._bin_log_vi = bin_log_vi
+        self._bin_log_bayes = bin_log_bayes
 
     @property
-    def bin_log_vi(self):
-        return self._bin_log_vi
+    def bin_log_bayes(self):
+        return self._bin_log_bayes
 
     def save(self, name: str, path: str = ".", overwrite: bool = True) -> str:
-        """Save 'OptimResultVIGB' object to folder 'name' in 'path'"""
+        """Save 'OptimResultBayesGB' object to folder 'name' in 'path'"""
 
-        # Saving 'OptimResultVI' attributes
+        # Saving 'OptimResultBayes' attributes
         acc_path = super().save(name, path, overwrite=overwrite)
 
         # Saving additional attributes
-        (self._bin_log_vi).save(name="bin_log_vi", path=acc_path, overwrite=overwrite)
+        (self._bin_log_bayes).save(name="bin_log_bayes", path=acc_path, overwrite=overwrite)
         return acc_path

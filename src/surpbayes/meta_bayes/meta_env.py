@@ -9,7 +9,7 @@ import dill
 import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.bayes import (AccuSampleValDens, AccuSampleValExp,
-                             infer_VI_routine, variational_inference)
+                             infer_pb_routine, pacbayes_minimize)
 from surpbayes.meta_bayes.hist_meta import HistMeta
 from surpbayes.meta_bayes.task import Task
 from surpbayes.misc import blab, prod
@@ -111,7 +111,7 @@ def _solve_in_kl_pre_exp(
 
 
 class MetaLearningEnv:
-    r"""Meta Learning environment for Variational Catoni PAC Bayes
+    r"""Meta Learning environment for Catoni PAC Bayes
 
     For a collection of task, meta learns a suitable prior.
 
@@ -161,7 +161,7 @@ class MetaLearningEnv:
                 environnement.
             prior_param (ProbaParam): initial prior param. Optional, default to ref_param in
                 proba_map.
-            **hyperparams (dict): further arguments passed to variational_inference (inner
+            **hyperparams (dict): further arguments passed to pacbayes_minimize (inner
                 learning algorithm).
         """
 
@@ -185,8 +185,8 @@ class MetaLearningEnv:
         if "optimizer" not in hyperparams:
             hyperparams["optimizer"] = None
 
-        hyperparams["optimizer"] = infer_VI_routine(
-            proba_map=proba_map, VI_method=hyperparams["optimizer"]
+        hyperparams["optimizer"] = infer_pb_routine(
+            proba_map=proba_map, pac_bayes_solver=hyperparams["optimizer"]
         )
 
         self.hyperparams = hyperparams
@@ -260,16 +260,16 @@ class MetaLearningEnv:
 
         "post_param" and "accu_sample_val" are updated inplace in the task.
 
-        The inner algorithm called is 'aduq.bayes.variational_inference.' The routine used depends
+        The inner algorithm called is 'aduq.bayes.pacbayes_minimize.' The routine used depends
         on the proba_map and hyperparams attributes of the learning environnement (pre inferred
         at construction time).
 
-        The 'accu_sample_val' field of the task is indirectly augmented by variational_inference.
+        The 'accu_sample_val' field of the task is indirectly augmented by pacbayes_minimize.
 
         Args:
             task: the task which should be trained (i.e. score function, tempertaure, accu_sample_val)
         **kwargs:
-            passed to variational_inference
+            passed to pacbayes_minimize
 
         Outputs:
             None (the task post_param, end_score and accu_sample_val attributes are modified)
@@ -278,7 +278,7 @@ class MetaLearningEnv:
         loc_hyperparams.update(hyperparams)
 
         # Perform the inner algorithm
-        opt_res = variational_inference(
+        opt_res = pacbayes_minimize(
             fun=task.score,
             proba_map=self.proba_map,
             prior_param=self.prior_param,

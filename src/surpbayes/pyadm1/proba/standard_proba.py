@@ -1,5 +1,5 @@
 """
-Standard distributions and distribution maps for Variational inference and other Bayesian methods.
+Standard distributions and distribution maps for PAC-Bayes calibration
 
 Distributions are defined on the Free Digester Parameter space (i.e. log space).
 The transform maps 0 to the default digester parameter, so that the means of default distributions
@@ -14,8 +14,9 @@ import numpy as np
 #                         TensorizedGaussianMap)
 from surpbayes.proba import BlockDiagGaussMap
 from surpbayes.pyadm1.basic_classes.parameter import ADM1Param
-from surpbayes.pyadm1.proba._normalisation_param import (devs_dict, devs_interp,
-                                                    renorm_param)
+from surpbayes.pyadm1.proba._normalisation_param import (devs_dict,
+                                                         devs_interp,
+                                                         renorm_param)
 
 # ------- Group diagonal covariance - Indexes to train -------
 parameter_families = [
@@ -65,51 +66,3 @@ def convert_param(param:np.ndarray)->ADM1Param:
 
     return ADM1Param(pre_dict)
 
-
-# # ------- Standard full gaussian distribution -------
-# proba_param_map = GaussianMap(n_param)
-# ref_proba_param = np.zeros((n_param + 1, n_param))
-# ref_proba_param[1:] = np.diag(std_devs)
-
-# ref_proba = proba_param_map(ref_proba_param)
-
-# # Use the covariance matrix for optimisation
-# default_proposal_cov = ref_proba.cov  # type: ignore
-
-# # ------- Standard gaussian distribution with block diagonal covariance -------
-# proba_param_map = BlockDiagGaussMap
-
-
-# # ------- Standard diagonal gaussian distribution -------
-# proba_param_t_map = TensorizedGaussianMap(sample_size=n_param)
-# ref_t_proba_param = np.zeros((2, n_param))
-# ref_t_proba_param[1] = std_devs
-
-# ref_t_proba = proba_param_t_map(ref_t_proba_param)
-
-# # ------- Standard fixed covariance gaussian distribution -------
-# proba_param_fcov_map = FixedCovGaussianMap(
-#     sample_size=n_param, cov=np.diag(std_devs**2)
-# )
-# ref_fcov_param = np.zeros(n_param)
-
-# # Check that no parameter is forgotten
-# assert np.sum([len(g) for g in parameter_families]) == len(parameter_dict)
-
-
-# def group_to_proba_index(group):
-#     indexes = [parameter_dict[param] for param in group]
-#     accu = indexes.copy()
-#     while len(indexes) > 0:
-#         k = indexes.pop()
-#         accu.append(n_param + n_param * k + k)
-#         for j in indexes:
-#             accu.append(n_param + n_param * k + j)
-#             accu.append(n_param + n_param * j + k)
-#     return accu
-
-
-# proba_param_indexes = []
-# for g in parameter_families:
-#     proba_param_indexes += group_to_proba_index(g)
-# proba_param_indexes.sort()

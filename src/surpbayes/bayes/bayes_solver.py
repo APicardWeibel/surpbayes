@@ -4,8 +4,8 @@ from typing import Callable, Optional, Union
 import numpy as np
 from multiprocess import Pool
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes.hist_vi import HistVILog
-from surpbayes.bayes.optim_result_vi import OptimResultVI
+from surpbayes.bayes.hist_bayes import HistBayesLog
+from surpbayes.bayes.optim_result_bayes import OptimResultBayes
 from surpbayes.misc import blab, prod
 from surpbayes.proba import ProbaMap
 from surpbayes.types import ProbaParam
@@ -15,7 +15,7 @@ from surpbayes.types import ProbaParam
 
 class BayesSolver:
     r"""
-    Main class for Variational Inference Bayesian task solving.
+    Main class for PAC-Bayes objective minimisation Bayesian task solving.
 
     For a map to probability distributions \pi, BayesSolver solves the following
     minimisation task:
@@ -98,7 +98,7 @@ class BayesSolver:
         self.set_up_per_step(per_step)
         self.set_up_accu(prev_eval)
 
-        self.hist_log = HistVILog(proba_map, chain_length + 1)
+        self.hist_log = HistBayesLog(proba_map, chain_length + 1)
 
         self.converged = False
         self.count = 0
@@ -169,15 +169,15 @@ class BayesSolver:
                 self.pool.terminate()
             raise exc
 
-    def process_result(self) -> OptimResultVI:
-        return OptimResultVI(
+    def process_result(self) -> OptimResultBayes:
+        return OptimResultBayes(
             opti_param=self._post_param,
             converged=self.converged,
-            opti_score=self.hist_log.VI_scores(1)[0],
+            opti_score=self.hist_log.bayes_scores(1)[0],
             hist_param=self.hist_log.proba_pars(),
-            hist_score=self.hist_log.VI_scores(),
+            hist_score=self.hist_log.bayes_scores(),
             end_param=self._post_param,
-            log_vi=self.hist_log,
+            log_bayes=self.hist_log,
             sample_val=self.accu,
         )
 

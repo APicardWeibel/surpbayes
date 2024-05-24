@@ -2,13 +2,13 @@ Metadata-Version: 2.1
 Name: surpbayes
 Version: 0.0.1
 Requires-Dist: pandas>=1.1.5
+Requires-Dist: numpy
 Requires-Dist: streamlit
 Requires-Dist: scikit-learn>=0.24.2
-Requires-Dist: azureml-core<=1.50
-Requires-Dist: azureml-pipeline-steps<=1.50
-Requires-Dist: azureml-pipeline<=1.50
-Requires-Dist: azureml-dataset-runtime<=1.50
-Requires-Dist: altair<5
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
+Requires-Dist: dill
+Requires-Dist: multiprocess
 Provides-Extra: test
 Requires-Dist: pytest>=6.1.2; extra == "test"
 Requires-Dist: pytest-cov>=2.10.1; extra == "test"

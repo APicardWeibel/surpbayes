@@ -2,7 +2,7 @@ import numpy as np
 
 from surpbayes.meta_bayes.task import Task
 from surpbayes.proba import ProbaMap
-from surpbayes.bayes import variational_inference
+from surpbayes.bayes import pacbayes_minimize
 from surpbayes.types import ProbaParam, ProbaParams
 
 from surpbayes.misc import par_eval, blab
@@ -14,7 +14,7 @@ def test_eval_task(meta_param:ProbaParam, test_task:Task, proba_map:ProbaMap, n_
     starting from meta_param prior. This prevents potential bias due
     to more accurate solutions being found after some iterations.
     """
-    opt_res = variational_inference(
+    opt_res = pacbayes_minimize(
         fun=test_task.score,
         proba_map=proba_map,
         prior_param=meta_param,

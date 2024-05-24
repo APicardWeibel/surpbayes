@@ -28,7 +28,7 @@ def soft_plus(
     x: Union[np.ndarray, float], max_val: float = 3.0, elbow: float = 1.0
 ) -> Union[np.ndarray, float]:
     """
-    Variation on the softplus function used for capping.
+    Variant on the softplus function used for capping.
 
     Smoothed version of x -> np.max(max_val, np.abs(x)).
     args:

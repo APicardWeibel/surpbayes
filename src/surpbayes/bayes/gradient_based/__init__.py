@@ -11,4 +11,4 @@ distribution when the temperature is small (i.e. high learning rate).
 from .accu_sample_dens import AccuSampleValDens
 from .gradient_based_solver import GradientBasedBayesSolver
 from .knn_solver import KNNBayesSolver
-from .optim_result_vi_gb import OptimResultVIGB
+from .optim_result_bayes_gb import OptimResultBayesGB

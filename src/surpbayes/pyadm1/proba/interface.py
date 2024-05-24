@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from surpbayes.bayes import BayesSolver, variational_inference
+from surpbayes.bayes import BayesSolver, pacbayes_minimize
 from surpbayes.misc import par_eval
 from surpbayes.pyadm1.digester import Digester
 from surpbayes.pyadm1.proba.standard_proba import convert_param
@@ -68,7 +68,7 @@ class Interface:
         elbow: float = 2.0,
         **kwargs,
         ):
-        return variational_inference(
+        return pacbayes_minimize(
             self.score,
             proba_map=proba_map,
             temperature=self.temperature,

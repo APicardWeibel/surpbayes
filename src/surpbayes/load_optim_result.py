@@ -18,9 +18,9 @@ import numpy as np
 
 from surpbayes.bayes import (
     OptimResultPriorIter,
-    OptimResultVI,
-    OptimResultVIGB,
-    load_hist_vi,
+    OptimResultBayes,
+    OptimResultBayesGB,
+    load_hist_bayes,
 )
 from surpbayes.load_accu import load_accu_sample_val
 from surpbayes.optim import OptimResult, OptimResultCMA
@@ -125,46 +125,46 @@ def load_optim_result(path) -> OptimResult:
             hyperparams=hyperparams,
         )
 
-    if opti_type == "OptimResultVIGB":
+    if opti_type == "OptimResultBayesGB":
         if opti_score is None:
-            raise ValueError("OptimResultVIGB should have an opti_score file")
+            raise ValueError("OptimResultBayesGB should have an opti_score file")
         end_param = np.loadtxt(os.path.join(path, "end_param.csv"))
 
         path_sample_val = os.path.join(path, "sample_val")
         sample_val = load_accu_sample_val(path_sample_val)
 
-        log_vi = load_hist_vi(os.path.join(path, "log_vi"))
-        bin_log_vi = load_hist_vi(os.path.join(path, "bin_log_vi"))
+        log_bayes = load_hist_bayes(os.path.join(path, "log_bayes"))
+        bin_log_bayes = load_hist_bayes(os.path.join(path, "bin_log_bayes"))
 
-        return OptimResultVIGB(
+        return OptimResultBayesGB(
             opti_param=opti_param,
             converged=converged,
             opti_score=opti_score,  # type: ignore
             hist_param=hist_param,  # type: ignore
             hist_score=hist_score,  # type: ignore
             end_param=end_param,
-            log_vi=log_vi,
-            bin_log_vi=bin_log_vi,
+            log_bayes=log_bayes,
+            bin_log_bayes=bin_log_bayes,
             sample_val=sample_val,
             hyperparams=hyperparams,
         )
 
-    if (opti_type == "OptimResultVI") or (opti_type == "OptimResultVISA"):
+    if (opti_type == "OptimResultBayes") or (opti_type == "OptimResultBayesSA"):
         if opti_score is None:
-            raise ValueError("OptimResultVIGB should have an opti_score file")
+            raise ValueError("OptimResultBayesGB should have an opti_score file")
 
         end_param = np.loadtxt(os.path.join(path, "end_param.csv"))
-        log_vi = load_hist_vi(os.path.join(path, "log_vi"))
+        log_bayes = load_hist_bayes(os.path.join(path, "log_bayes"))
         sample_val = load_accu_sample_val(os.path.join(path, "sample_val"))
 
-        return OptimResultVI(
+        return OptimResultBayes(
             opti_param=opti_param,
             converged=converged,
             opti_score=opti_score,  # type: ignore
             hist_param=hist_param,  # type: ignore
             hist_score=hist_score,  # type: ignore
             end_param=end_param,
-            log_vi=log_vi,
+            log_bayes=log_bayes,
             sample_val=sample_val,
             hyperparams=hyperparams,
         )

@@ -5,12 +5,12 @@ import numpy as np
 from scipy.spatial import cKDTree
 from scipy.stats import gaussian_kde
 
-from surpbayes.bayes.optim_result_vi import OptimResultVI
+from surpbayes.bayes.optim_result_bayes import OptimResultBayes
 from surpbayes.bayes.score_approx.weighing import get_weights_mc
 
 
 def plot_score_evol(
-    opt_res: OptimResultVI,
+    opt_res: OptimResultBayes,
     n_sample_weight_estim=10**5,
     n_y=400,
     cmap="RdBu",
@@ -23,8 +23,8 @@ def plot_score_evol(
     Note that this plot takes quite a while to be generated.
     """
     sample_val = opt_res.sample_val
-    proba_map = opt_res.log_vi.proba_map
-    proba_pars = opt_res.log_vi.proba_pars()
+    proba_map = opt_res.log_bayes.proba_map
+    proba_pars = opt_res.log_bayes.proba_pars()
 
     y_min, y_max = (
         np.min(sample_val.vals()),
@@ -81,16 +81,16 @@ def plot_score_evol(
 
 
 def plot_score_push_begin_end(
-    opt_res: OptimResultVI,
+    opt_res: OptimResultBayes,
     n_sample_weight_estim: int = 10**5,
     bw_method=None,
     plot=plt,
     n_y: int = 400,
 ):
-    """Plot pushforward of score for the first and last distribution of an OptimResultVI"""
+    """Plot pushforward of score for the first and last distribution of an OptimResultBayes"""
     sample_val = opt_res.sample_val
-    proba_map = opt_res.log_vi.proba_map
-    proba_pars = opt_res.log_vi.proba_pars()
+    proba_map = opt_res.log_bayes.proba_map
+    proba_pars = opt_res.log_bayes.proba_pars()
 
     y_min, y_max = (
         np.min(sample_val.vals()),
