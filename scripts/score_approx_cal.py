@@ -18,11 +18,12 @@ n_eval = 160
 # Accessing data
 loc_path, _ = os.path.split(__file__)
 
-data_path = os.path.join(loc_path, "..", "ADM1_data_LF")
-save_path = os.path.join(loc_path, "..", "exp_results", "optim")
+data_path = os.path.join(loc_path, "..", "data", "ADM1_data_LF")
+save_path = os.path.join(loc_path, "..", "exp_results", "optim", "SurPAC")
 
 os.makedirs(save_path, exist_ok=True)
 
+# Read digester daga
 feed = load_dig_feed(os.path.join(data_path,"train_data/feed.csv")) 
 ini_state = load_dig_state(os.path.join(data_path, "train_data/init_state.json"))
 obs = load_dig_states(os.path.join(data_path, "train_data/obs.csv"))
@@ -35,8 +36,8 @@ interface = Interface(dig, temperature, prior_param=prior_param)
 
 def eval_results(
     post_params:list[ProbaParam]
-):
-    """Evaluate a posterior"""
+)->np.ndarray:
+    """Evaluate a posterior evaluating new parameters"""
     perfs = np.zeros(len(post_params))
 
     for i, post_param in enumerate(post_params):

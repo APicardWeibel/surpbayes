@@ -10,20 +10,12 @@ from surpbayes.meta_bayes import MetaLearningEnv, Task
 from surpbayes.meta_bayes.test_assess import eval_meta_hist
 from surpbayes.proba import GaussianMap
 
-run = Run.get_context()
-parser = argparse.ArgumentParser()
-args = parse_and_log_script_arguments(parser, run)
-
 loc_path, _ = os.path.split(__file__)
 
 data_path = os.path.join(loc_path, "..", "ADM1_data_LF")
 save_path = os.path.join(loc_path, "..", "exp_results", "meta_learning")
 os.makedirs(save_path, exist_ok=True)
 
-# Define a score function generator
-# Care is taken to ensure that the score is not quadratic and is bounded
-# However, it remains nearly quadratic close to the minima (as for all
-# C2 function though) and has a single local minima.
 def perturb(x, omega):
     return (np.cos(x * omega) - 1.0)/omega + x
 
@@ -87,81 +79,85 @@ class TaskGen:
         
         return [make_task(param, hhess, omega, self.__temp) for param, hhess, omega in zip(params, hhess_s, omegas)], params, hhess_s, omegas
 
-d = int(args.d)
-true_dim = int(args.true_dim)
+def main(temp:float, d:int=8, true_dim:int=2, n_train_tasks:int=100, eps_false_dim:float=0.05, n_test_tasks:int=40, hess_sd:float=0.1):
 
-n_train_tasks = int(args.n_train_tasks)
-eps_false_dim = float(args.eps_false_dim)
-ortho_mat = ortho_group(d).rvs(1)
+    # Define a score function generator
+    # Care is taken to ensure that the score is not quadratic and is bounded
+    # However, it remains nearly quadratic close to the minima (as for all
+    # C2 function though) and has a single local minima.
 
-half_draw_cov = np.diag(np.concatenate([np.exp(np.random.uniform(-0.5, 0.5, true_dim)), np.full(d-true_dim, eps_false_dim)])) @ ortho_mat
+    ortho_mat = ortho_group(d).rvs(1)
 
-pre_hess = np.eye(d)
+    half_draw_cov = np.diag(np.concatenate([np.exp(np.random.uniform(-0.5, 0.5, true_dim)), np.full(d-true_dim, eps_false_dim)])) @ ortho_mat
 
-mean_param = np.random.normal(0, 1, d)
-mean_param = 2.0 * mean_param / np.sqrt(np.sum(mean_param ** 2))
+    pre_hess = np.eye(d)
 
-temp = float(args.temperature)
+    mean_param = np.random.normal(0, 1, d)
+    mean_param = 2.0 * mean_param / np.sqrt(np.sum(mean_param ** 2)) # Force norm of 2
 
-np.savetxt("outputs/mean_param.csv", mean_param)
-np.savetxt("outputs/half_draw_cov.csv", half_draw_cov)
+    temp_str = str(temp).replace('.', '_')
+    np.savetxt(os.path.join(save_path, f"mean_param_{temp_str}.csv"), mean_param)
+    np.savetxt(os.path.join(save_path, f"half_draw_cov_{temp_str}.csv"), half_draw_cov)
 
-task_gen = TaskGen(
-    temp=float(temp),
-    mean_param=mean_param,
-    half_draw_cov=half_draw_cov,
-    pre_hess=pre_hess,
-    hess_sd=float(args.hess_sd))
+    task_gen = TaskGen(
+        temp=temp,
+        mean_param=mean_param,
+        half_draw_cov=half_draw_cov,
+        pre_hess=pre_hess,
+        hess_sd=hess_sd)
 
-# Check that accurate number of dimensions is chosen
-assert np.sum((np.linalg.eigvalsh(np.cov(task_gen.draw_params(10000), rowvar=False))) > (eps_false_dim**2) * 1.5) == true_dim
+    # Check that accurate number of dimensions is chosen
+    assert np.sum((np.linalg.eigvalsh(np.cov(task_gen.draw_params(10000), rowvar=False))) > (eps_false_dim**2) * 1.5) == true_dim
 
-train_tasks, params, hhess_s, omegas = task_gen.draw_tasks(n_train_tasks)
+    train_tasks, params, hhess_s, omegas = task_gen.draw_tasks(n_train_tasks)
 
-proba_map = GaussianMap(d)
+    proba_map = GaussianMap(d)
 
-mlearn = MetaLearningEnv(
-    proba_map,
-    list_task=train_tasks,
-    per_step=[100] * 5 + [50] * 10, # Initial 
-    chain_length=15,
-    kl_max=0.5,
-    dampen=0.7,
-    n_estim_weights=10**4,
-    silent=True,
-)
+    mlearn = MetaLearningEnv(
+        proba_map,
+        list_task=train_tasks,
+        per_step=[100] * 5 + [50] * 10, # Initial 
+        chain_length=15,
+        kl_max=0.5,
+        dampen=0.7,
+        n_estim_weights=10**4,
+        silent=True,
+    )
 
-tic = time()
-mlearn.meta_learn(epochs=1, eta=1/temp, kl_max=0.2, mini_batch_size=10) # Initial training
-tac = time()
-print("-" * 10, f"Complete initial training in {tac-tic} s", "-" * 10)
+    tic = time()
+    mlearn.meta_learn(epochs=1, eta=1/temp, kl_max=0.2, mini_batch_size=10) # Initial training
+    tac = time()
+    print("-" * 10, f"Complete initial training in {tac-tic} s", "-" * 10)
 
-# Change hyperparameters
-mlearn.hyperparams.update({"per_step":[20, 0] * 2, "chain_length": 4, "dampen": 0.3})
-tic = time()
-mlearn.meta_learn(epochs = 19, eta = 1.0/temp, kl_max = 0.2, mini_batch_size=20)
-mlearn.meta_learn(epochs = 30, eta = 0.5/temp, kl_max = 0.1, mini_batch_size=20)
-mlearn.meta_learn(epochs = 100, eta = 0.4/temp, kl_max = 0.1, mini_batch_size=20)
-tac = time()
-print("-" * 10, f"Complete second training phase in {tac-tic} s", "-" * 10)
+    # Change hyperparameters
+    mlearn.hyperparams.update({"per_step":[20, 0] * 2, "chain_length": 4, "dampen": 0.3})
+    tic = time()
+    mlearn.meta_learn(epochs = 19, eta = 1.0/temp, kl_max = 0.2, mini_batch_size=20)
+    mlearn.meta_learn(epochs = 30, eta = 0.5/temp, kl_max = 0.1, mini_batch_size=20)
+    mlearn.meta_learn(epochs = 100, eta = 0.4/temp, kl_max = 0.1, mini_batch_size=20)
+    tac = time()
+    print("-" * 10, f"Complete second training phase in {tac-tic} s", "-" * 10)
 
-# Change hyperparameters for last phase
-mlearn.hyperparams.update({"per_step":[10, 0, ] * 2})
-tic = time()
-mlearn.meta_learn_batch(epochs=50, eta = 0.2/temp, kl_max = 0.1, kl_tol=10**-4)
-tac = time()
-print("-" * 10, f"Complete last training phase in {tac-tic} s", "-" * 10)
+    # Change hyperparameters for last phase
+    mlearn.hyperparams.update({"per_step":[10, 0, ] * 2})
+    tic = time()
+    mlearn.meta_learn_batch(epochs=50, eta = 0.2/temp, kl_max = 0.1, kl_tol=10**-4)
+    tac = time()
+    print("-" * 10, f"Complete last training phase in {tac-tic} s", "-" * 10)
 
-mlearn.save("learn_env", "outputs")
-n_test_tasks = int(args.n_test_tasks)
-test_tasks, _, _, _ = task_gen.draw_tasks(n_test_tasks)
+    mlearn.save(f"learn_env_{temp_str}", save_path)
+    test_tasks, _, _, _ = task_gen.draw_tasks(n_test_tasks)
 
-eval_index = list(range(10)) + list(range(10, mlearn.hist_meta.n_filled, 5))
-test_perf = eval_meta_hist(
-    mlearn.hist_meta.meta_params()[eval_index],
-    test_tasks, proba_map = proba_map,
-    n_test = 10**4,
-    hyperparams= {"per_step":[100] * 5 + [50] * 15, "chain_length": 20})
+    eval_index = list(range(10)) + list(range(10, mlearn.hist_meta.n_filled, 5))
+    test_perf = eval_meta_hist(
+        mlearn.hist_meta.meta_params()[eval_index],
+        test_tasks, proba_map = proba_map,
+        n_test = 10**4,
+        hyperparams= {"per_step":[100] * 5 + [50] * 15, "chain_length": 20})
 
-np.savetxt("outputs/test_perf.csv", test_perf)
-run.complete()
+    np.savetxt(os.path.join(save_path, f"perfs_{temp_str}.csv"), test_perf)
+
+if __name__ == "__main__":
+    # evaluate two temperatures: 0.1 and 0.01
+    main(temp=0.1)
+    main(temp=0.01)
