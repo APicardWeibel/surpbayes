@@ -35,9 +35,7 @@ n_eval = 160
 
 def main(per_step:int, eta:float, budget:int=9600):
 
-    par_str = f"{per_step}_{str(eta).replace('.', '_')}"
-    par_dir =  os.path.join(save_path, f"par_{par_str}")
-    os.makedirs(par_dir, exist_ok=True)
+    par_str = f"{str(eta).replace('.', '_')}_{per_step}"
 
     def eval_results(
         post_params:list[ProbaParam]
@@ -73,9 +71,6 @@ def main(per_step:int, eta:float, budget:int=9600):
             # Save list of posterior
             params = list(opt_res.hist_param)
             params.append(opt_res.opti_param)
-            np.savetxt(os.path.join(par_dir, f"hist_par_{i}.csv"), 
-                    np.array(params))
-            opt_res.save(f"opt_res_{i}", path=par_dir)
 
             # Re evaluate 
             end_param = opt_res.opti_param
@@ -91,7 +86,6 @@ def main(per_step:int, eta:float, budget:int=9600):
             # repeats (increase variance), but no expected to be significant.
 
             score_evol = np.array(list(opt_res.hist_score) + [opti_score])
-            np.savetxt(os.path.join(par_dir, f"score_evol_{i}"), score_evol)
             results.append(score_evol)
             print()
 

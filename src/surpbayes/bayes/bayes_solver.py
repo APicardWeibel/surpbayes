@@ -15,7 +15,7 @@ from surpbayes.types import ProbaParam
 
 class BayesSolver:
     r"""
-    Main class for PAC-Bayes objective minimisation Bayesian task solving.
+    Main class for PAC-Bayes objective minimisation.
 
     For a map to probability distributions \pi, BayesSolver solves the following
     minimisation task:

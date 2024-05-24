@@ -64,9 +64,6 @@ for i in range(20):
         m_max=25,
         )
     params = np.asarray(opt_res.hist_param)
-    np.savetxt(os.path.join(save_path, f"hist_par_{i}.csv"), 
-               params)
-    opt_res.save(f"opt_res_{i}", path=save_path)
 
     print("Re evaluating score evolution (this can be long)")
     # Speed up by evaluating only part of the indexes
@@ -74,7 +71,6 @@ for i in range(20):
     params_to_eval = [opt_res.hist_param[i] for i in evals_index]
 
     score_evol = eval_results(params_to_eval)
-    np.savetxt(os.path.join(save_path, f"score_evol_{i}"), score_evol)
     results.append(score_evol)
     print()
 

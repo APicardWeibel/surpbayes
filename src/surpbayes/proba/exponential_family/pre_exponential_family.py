@@ -15,7 +15,7 @@ any parameter outputing the distribution.
 Used while no better solution is found.
 """
 import warnings
-from typing import Callable, Optional
+from typing import Callable, Optional, Sequence
 
 import numpy as np
 from surpbayes.proba.proba import Proba
@@ -388,3 +388,131 @@ class TransformedPreExpFamily(PreExpFamily):
             grad_f_div=self._grad_f_div,
             grad_right_f_div=self._grad_right_f_div,
         )
+
+    def kl(  # pylint: disable=E0202
+        self,
+        param_1: ProbaParam,
+        param_0: ProbaParam,
+        n_sample: int = 1000,
+    ) -> float:
+        """Approximate the Kullback Leibler divergence between two distributions
+        defined by their prior parameters.
+
+        Args:
+            param_1, param_0 are 2 prior parameters
+            n_sample specifies how many points are used to estimate Kullback
+
+        Output:
+            kl(param_1, param_0) approximated as Sum_i(log(proba_1(phi_i)/proba_0(phi_i))
+            with phi_i sampled through proba_1.gen (typically i.i.d.)
+
+        Note:
+            For a ProbaMap object obtained as the result of .reparametrize method with
+            inherit_method=True, this method might be hidden behind a function attribute which
+            is more efficient.
+        """
+        return self._kl(
+            param_1,
+            param_0,
+            n_sample,
+        )
+
+    def grad_kl(  # pylint: disable=E0202
+        self, param_0: ProbaParam
+    ) -> Callable[[ProbaParam, int], tuple[ProbaParam, float]]:
+        """
+        Approximates the gradient of the Kullback Leibler divergence between two distributions
+        defined by their distribution parameters, with respect to the first distribution
+        (nabla_{proba_1} kl(proba_1, proba_0))
+
+        Args:
+            param_0, a distribution parameter
+
+        Output:
+            A closure taking as arguments:
+                param_1, a distribution parameter
+                n_sample, an integer
+            outputing a tuple with first element
+                nabla_{param_1}kl(param_1, param_0) approximated using a sample
+                    phi_i of predictors generated through proba_1.gen (typically i.i.d.).
+                kl(param_1, param_0) approximated using the same sample of predictors
+
+        This method should be rewritten for families with closed form expressions of KL and
+        KL gradient. The closure form is used to simplify caching computations related to param_0
+        (for instance inverse of covariance matrix for gaussian distributions).
+
+        Note:
+            For a ProbaMap object obtained as the result of .reparametrize method with
+            inherit_method=True, this method might be hidden behind a function attribute which
+            is more efficient.
+        """
+
+        return self._grad_kl(param_0)
+
+    def grad_right_kl(  # pylint: disable=E0202
+        self, param_1: ProbaParam
+    ) -> Callable[[ProbaParam, int], tuple[ProbaParam, float]]:
+        """
+        Compute the derivative of the Kullback--Leibler divergence with respect to the second
+        distribution.
+        """
+        return self._grad_right_kl(param_1)
+
+    def f_div(  # pylint: disable=E0202
+        self,
+        param_1: ProbaParam,
+        param_0: ProbaParam,
+        f: Callable[[Sequence[float]], Sequence[float]],
+        n_sample: int = 1000,
+    ) -> float:
+        r"""Approximates the f-divergence between two distributions
+        defined by their prior parameters.
+
+        Args:
+            param_1, param_0 are 2 prior parameters
+            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            n_sample, number of points used to estimate the f-divergence
+
+        Output:
+            $D_f(proba_1, proba_0)$ approximated as $\sum_i(f(proba_1(\phi_i)/proba_0(\phi_i))$
+            with $\phi_i$ sampled through proba_0.gen (typically i.i.d.)
+
+        Note:
+            For a ProbaMap object obtained as the result of .reparametrize method with
+            inherit_method=True, this method might be hidden behind a function attribute which
+            is more efficient.
+        """
+        return self._f_div(param_1, param_0, f, n_sample)
+
+    def grad_f_div(  # pylint: disable=E0202
+        self,
+        param_0: ProbaParam,
+        f: Callable[[float], float],
+        f_der: Callable[[float], float],
+    ) -> Callable[[ProbaParam, int], tuple[ProbaParam, float]]:
+        r"""Approximates the gradient of the f-divergence between two distributions
+        defined by their prior parameters, with respect to the first distribution.
+
+        Args:
+            param_0, the parameter describing the second distribution.
+            f, a convex function such that $f(1) = 0$ (No checks are performed).
+                Should be vectorized
+            f_der, the derivative of f. Should be vectorized
+        """
+        return self._grad_f_div(param_0, f, f_der)
+
+    def grad_right_f_div(  # pylint: disable=E0202
+        self,
+        param_1: ProbaParam,
+        f: Callable[[float], float],
+        f_der: Callable[[float], float],
+    ) -> Callable[[ProbaParam, int], tuple[ProbaParam, float]]:
+        r"""Approximates the gradient of the f-divergence between two distributions
+        defined by their prior parameters, with respect to the second distribution.
+
+        Args:
+            param_1, the parameter describing the first distribution.
+            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f_der, the derivative of f
+        """
+        return self._grad_right_f_div(param_1, f, f_der)

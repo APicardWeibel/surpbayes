@@ -18,7 +18,8 @@ from surpbayes.types import ProbaParam
 set_pac_bayes_solver = {
     "corr_weights",
     "knn",
-    "score_approx",
+    "SurPAC-CE", 
+    "score_approx", # old name for SurPAC-CE, still used as reference until mod
     "score_approx_gauss",
     "score_approx_pre_exp",
     "score_approx_exp",
@@ -39,7 +40,7 @@ def infer_pb_routine(
         If 'score_approx', checks the appropriate version of 'score_approx' depending on the
         'proba_map' passed.
     """
-    if (pac_bayes_solver is None) or (pac_bayes_solver == "score_approx"):
+    if (pac_bayes_solver is None) or (pac_bayes_solver == "score_approx") or (pac_bayes_solver == "SurPAC-CE"):
         if proba_map.map_type == "Gaussian":
             return GaussianSABS
         if proba_map.map_type == "PreExpFamily":
@@ -50,7 +51,7 @@ def infer_pb_routine(
             return GradientBasedBayesSolver
 
         raise ValueError(
-            "'score_approx' can only be used for Gaussian, Block diagonal Gaussian or Exponential Families"
+            f"'{pac_bayes_solver}' can only be used for Gaussian, Block diagonal Gaussian or Exponential Families (instances of 'PreExpFamily' or 'ExponentialFamily'"
         )
     elif isinstance(pac_bayes_solver, str):
         if pac_bayes_solver == "score_approx_gauss":
