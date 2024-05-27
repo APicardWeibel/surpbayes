@@ -1,14 +1,13 @@
 import numpy as np
 from surpbayes.bayes.surpac.pre_exp_solver import PreExpSPACS
 from surpbayes.bayes.surpac.weighing import get_weights_mc_gauss
-# from multiprocess import Pool  # pylint: disable=E0611
 from surpbayes.misc import blab
 from surpbayes.proba import Proba
 from surpbayes.types import Samples
 
 
 class GaussianSPACS(PreExpSPACS):
-    """Bayesian Solver using Score approximation routine for Gaussian Family Maps
+    """Bayesian Solver using SurPAC routine for Gaussian Family Maps
 
     Differs from routine for standard PreExpFamily by the weighing technique (covariance matrix
     of the proba used.)
@@ -24,8 +23,8 @@ class GaussianSPACS(PreExpSPACS):
             self.silent,
             " ".join(
                 [
-                    "Starting Bayesian calibration",
-                    "(Score Approximation routine,",
+                    "Starting PAC-Bayes training",
+                    "(SurPAC routine,",
                     "Gaussian variant)",
                 ]
             ),

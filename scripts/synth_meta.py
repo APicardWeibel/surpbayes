@@ -16,6 +16,8 @@ data_path = os.path.join(loc_path, "..", "ADM1_data_LF")
 save_path = os.path.join(loc_path, "..", "exp_results", "meta_learning")
 os.makedirs(save_path, exist_ok=True)
 
+# Create synthetic empirical risk function
+# The resulting function takes values in 0/1
 def perturb(x, omega):
     return (np.cos(x * omega) - 1.0)/omega + x
 
@@ -33,6 +35,10 @@ def make_task(
     
     return Task(score, temperature=temperature, vectorized=True)
 
+# Define a score function generator
+# Care is taken to ensure that the score is not quadratic and is bounded
+# However, it remains nearly quadratic close to the minima (as for all
+# C2 function though) and has a single local minima.
 class TaskGen:
     """Class for generating tasks
     
@@ -80,11 +86,6 @@ class TaskGen:
         return [make_task(param, hhess, omega, self.__temp) for param, hhess, omega in zip(params, hhess_s, omegas)], params, hhess_s, omegas
 
 def main(temp:float, d:int=8, true_dim:int=2, n_train_tasks:int=100, eps_false_dim:float=0.05, n_test_tasks:int=40, hess_sd:float=0.1):
-
-    # Define a score function generator
-    # Care is taken to ensure that the score is not quadratic and is bounded
-    # However, it remains nearly quadratic close to the minima (as for all
-    # C2 function though) and has a single local minima.
 
     ortho_mat = ortho_group(d).rvs(1)
 
@@ -145,7 +146,7 @@ def main(temp:float, d:int=8, true_dim:int=2, n_train_tasks:int=100, eps_false_d
     tac = time()
     print("-" * 10, f"Complete last training phase in {tac-tic} s", "-" * 10)
 
-    mlearn.save(f"learn_env_{temp_str}", save_path)
+    np.savetxt(f"train_perfs_{temp_str}.csv", mlearn.hist_meta.meta_scores())
     test_tasks, _, _, _ = task_gen.draw_tasks(n_test_tasks)
 
     eval_index = list(range(10)) + list(range(10, mlearn.hist_meta.n_filled, 5))

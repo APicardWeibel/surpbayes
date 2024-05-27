@@ -4,7 +4,7 @@ Main function:
     (see https://doi.org/10.48550/arXiv.2110.11216)
 
 Main classes:
-- BayesSolver: class performing the minimization of Catoni's objective (dummy, to be 
+- BayesSolver: class performing the minimization of Catoni's objective (dummy, to be
 inherited)
 - GradientBasedBayesSolver: subclass of BayesSolver with a GD procedure
 - SurPACSolver

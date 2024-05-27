@@ -79,7 +79,7 @@ class KNNBayesSolver(GradientBasedBayesSolver):
             self.silent,
             " ".join(
                 [
-                    "Starting Bayesian calibration",
+                    "Starting PAC-Bayes training",
                     "(Gradient descent routine",
                     "with KNN trained proxy score)",
                 ]

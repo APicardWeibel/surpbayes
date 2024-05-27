@@ -3,15 +3,12 @@
 from typing import Callable, Optional, Union
 
 import numpy as np
-
-from surpbayes.types import ProbaParam, SamplePoint
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes.surpac.surpac_solver import (
-    SurPACSolver,
-)
+from surpbayes.bayes.surpac.surpac_solver import SurPACSolver
 from surpbayes.misc import blab
 from surpbayes.optim import dichoto
 from surpbayes.proba import PreExpFamily, RenormError
+from surpbayes.types import ProbaParam, SamplePoint
 
 # from multiprocess import Pool  # pylint: disable=E0611
 
@@ -68,7 +65,7 @@ def _solve_in_kl(
 
 
 class PreExpSPACS(SurPACSolver):
-    """Bayesian Optimisation using Score approximation routine for PreExpFamily Maps
+    """Bayesian Optimisation using SurPAC routine for PreExpFamily Maps
 
     Methods for the computation of the update correction are adapted ('get_t_dir',
     'get_updt_speed', 'updt_post_par')
@@ -132,8 +129,8 @@ class PreExpSPACS(SurPACSolver):
             self.silent,
             " ".join(
                 [
-                    "Starting Bayesian calibration",
-                    "(Score Approximation routine,",
+                    "Starting PAC-Bayes training",
+                    "(SurPAC routine,",
                     "Pre Exponential Family variant)",
                 ]
             ),

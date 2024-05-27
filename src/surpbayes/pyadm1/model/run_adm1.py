@@ -14,6 +14,9 @@ appeared to decrease computation time significantly.
 function.
 - VS/VSR computations added.
 
+Further changes:
+- JIT compiled functions are used inside the ODE solver.
+
 Note:
     Function signature uses the custom classes defined in the pyadm1 module. The function would
     perfom in a similar manner if numpy.ndarrays correctly formatted are used instead.

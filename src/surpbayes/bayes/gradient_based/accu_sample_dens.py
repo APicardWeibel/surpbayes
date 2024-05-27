@@ -114,7 +114,8 @@ class AccuSampleValDens(AccuSampleVal):
         weight corrections.
 
         The resulting samples and weights can be used to estimate integrals through
-            $$\mathbb{E}_{proba}[f(x)] \simeq 1/N \sum \omega_i f(x_i)$$
+        ..math::
+            \mathbb{E}_{proba}[f(x)] \simeq 1/N \sum \omega_i f(x_i)
         This is integral estimation is unbiased (variance analysis is not straightforward). The sub
         sums for each generation are also unbiased (but they are correlated with one another).
         """
@@ -137,16 +138,16 @@ class AccuSampleValDens(AccuSampleVal):
     ) -> tuple[np.ndarray, float, float]:
         r"""
         Outputs the derivative and evaluation at param of
+        ..math::
+            J(param) = \sum_{g>0} J_g(param) \exp(- g * gen_decay) / \sum_{g>0} \exp(-g * gen_decay)
 
-        $$J(param) = \sum_{g>0} J_g(param) \exp(- g * gen_decay) / \sum_{g>0} \exp(-g * gen_decay)$$
-
-        where J_g uses the sample S_g from generation g generated from param_g to estimate the mean
-        through
-            $J_g(param) =
-        \sum_{x \in S_g} score(x) * \exp(log_dens(x, param) - log_dens(x, param_g)) / \lvert S_g \rvert
+        where :math:`J_g` uses the sample :math:`S_g` from generation g generated from :math:`param_g`
+        to estimate the mean through
+        ..math:: 
+            J_g(param) = \sum_{x \in S_g} score(x) \times \exp(log_dens(x, param) - log_dens(x, param_g)) / \lvert S_g \rvert
 
         The intuition being that if the distributions generating all parameters are similar, then
-        it is beneficial to use the previous evaluations of the score function in order to minimize
+        it is beneficial to use the previous evaluations of the score function in order to reduce
         the variance of the derivative estimate.
 
         Note:

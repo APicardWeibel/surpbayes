@@ -10,8 +10,8 @@ performances when data is scarce.
 
 A simple way to add inductive bias to the classic empirical risk minimisation learning algorithm is
 to add a penalisation term. As such, for a risk $\hat{R}$, the calibrated parameter is defined as
-
-    $$\hat\theta \in \arg\min \hat{R}(\theta) + \lambda P(\theta, \theta_0) $$
+..math::
+    \hat\theta \in \arg\min \hat{R}(\theta) + \lambda P(\theta, \theta_0)
 
 where $P$ is a penalisation function and $\lambda$ controlling the learning rate.
 
@@ -20,15 +20,15 @@ empirical risks $\hat{R}_i$. We also consider different learning rates $\lambda_
 
 For a given inductive bias $\theta_0$, which we will name meta parameter from now on, one can
 consider the penalized meta score
-
-    $$ S(\theta_0) = \sum_i \hat{R}_i(\hat{\theta}_i) + \lambda_i P(\hat{\theta}_i, \theta_0) $$
+..math::
+    S(\theta_0) = \sum_i \hat{R}_i(\hat{\theta}_i) + \lambda_i P(\hat{\theta}_i, \theta_0)
 where $\hat{\theta}_i$ is the minimizer of the penalized risk, and as such is a function of
 $\theta_0$.
 
 Assuming that the score and penalisation are differentiable, then the meta score derivative can be
 computed as:
-
-    $$ \nabla S(\theta_0) = \sum_i \lambda_i \nabla_2 P(\hat{\theta}_i, \theta_0). $$
+..math::
+    \nabla S(\theta_0) = \sum_i \lambda_i \nabla_2 P(\hat{\theta}_i, \theta_0).
 
 This formula relies on the fact that the penalised score is minimized at $\hat{\theta}_i$, and
 therefore the gradient of the penalised score with respect to $\hat{\theta}_i$ is $0$.

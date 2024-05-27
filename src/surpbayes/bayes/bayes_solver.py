@@ -182,7 +182,7 @@ class BayesSolver:
         )
 
     def msg_begin_calib(self) -> None:
-        blab(self.silent, "Starting Bayesian calibration")
+        blab(self.silent, "Starting PAC-Bayes training")
 
     def msg_begin_step(self) -> None:
         """Print at the beginning of a step"""
@@ -198,9 +198,16 @@ class BayesSolver:
 
     def msg_end_calib(self) -> None:
         _, tot_score, kl, mean_score = self.hist_log.get(1)
+        msg = "End of PAC-Bayes training."
+        if self.converged:
+            msg = msg + " Converged.\n"
+        else:
+            msg = msg + " Did not converge.\n"
+
+        msg += f"End score:  {tot_score[0]} (KL: {kl[0]}, score:{mean_score[0]})"
         blab(
             self.silent,
-            f"End score:  {tot_score[0]} (KL: {kl[0]}, score:{mean_score[0]})",
+            msg,
         )
 
     def check_convergence(self, new_post_param):

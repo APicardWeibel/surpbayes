@@ -7,7 +7,7 @@ Two routines are considered:
 
 The SVGD approach could be bring a boost to situations where:
 - The dimension is small
-- The score function is costly (SVGD computation time is negligible).
+- The score function is very costly (SVGD computation time is negligible).
 
 Future:
 These approach could be superseded by using Gaussian Processes approximation of the score such as

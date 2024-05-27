@@ -22,15 +22,16 @@ class HistBayesLog:
     r"""
     Manages the high level history of a PAC Bayesian optimisation problem of form
 
-    $$PB_{Cat}(\theta) = E_{p(\theta)}[score] + C kl(p(\theta), p0).$$
-    where $E_{p(\theta)}[score]$ is the expected value (or mean) of the score of the probability
-    distribution $p(\theta)$.
+    .. math::
+        PB_{Cat}(\theta) = \mathbb{E}_{p(\theta)}[score] + C kl(p(\theta), p0).
+    where :math:`\mathbb{E}_{p(\theta)}[score]` is the expected value (or mean) of the score of the probability
+    distribution :math:`p(\theta)`.
 
     Stored data can be accessed through methods:
-        proba_pars ($\theta$),
-        bayes_scores ($PB_{Cat}(\theta)$),
-        KLs ($kl(p(\theta), p0)$),
-        means ($E_{p(\theta)}[score]$)
+        proba_pars (:math:`\theta`),
+        bayes_scores (:math:`PB_{Cat}(\theta)`),
+        KLs (:math:`kl(p(\theta), p0)`),
+        means (:math:`\mathbb{E}_{p(\theta)}[score]`)
     which take as input a number of data (optional, if None returns all data)
 
     Data is stored in np.ndarray of fixed sized defined at initialisation. These should never be
@@ -38,7 +39,7 @@ class HistBayesLog:
     of stored data is changed)
 
     The class is initialised by:
-        A ProbaMap object (the function p mapping $\theta$ to a distribution)
+        A ProbaMap object (the function p mapping :math:`\theta` to a distribution)
         The maximal number of elements stored.
     """
 

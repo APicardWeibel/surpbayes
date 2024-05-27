@@ -138,8 +138,9 @@ class MetaLearningEnv:
     function and temperature for task $i$, $\hat{\theta}_i = \hat{\theta}_i(\theta_0)$ the
     posterior parameter using prior $\theta_0$, the meta score of prior parameter $\theta_0$ is
     defined as
-        $$S(\theta_0)
-        = \sum_i \pi(\hat{\theta}_i)[R_i] + \lambda_i KL(\pi(\hat{\theta}_i), \pi(\theta_0))$$
+    ..math::
+        S(\theta_0)
+        = \sum_i \pi(\hat{\theta}_i)[R_i] + \lambda_i KL(\pi(\hat{\theta}_i), \pi(\theta_0))
 
     The derivative of the meta score has simple expression $\sum \lambda_i K_i$ where $K_i$ is the
     gradient of the Kullback--Leibler term $KL(\pi(\hat{\theta}_i), \pi(\theta_0))$ with respect to

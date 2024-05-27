@@ -1,3 +1,5 @@
+"""Main classes for Optimizer relying on multiple evaluations of random points at each iteration
+(e.g. CMA-ES)."""
 from typing import Callable, Optional, Union
 
 import numpy as np

@@ -8,7 +8,6 @@ import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.bayes.bayes_solver import BayesSolver
 from surpbayes.bayes.optim_result_bayes import OptimResultBayes
-# from surpbayes.bayes.score_approx._helper import set_up_per_step
 from surpbayes.bayes.surpac.accu_sample_exp import (AccuSampleValExp,
                                                     _add_T_data)
 from surpbayes.bayes.surpac.weighing import get_weights_mc
@@ -74,8 +73,11 @@ def exp_approximation(
     scores: np.ndarray,
     weights: Optional[np.ndarray] = None,
 ):
-    r"""Compute the best approximation of the score function as $x \rightarrow \theta\cdot T(x)$
-    using a weighted L2 criteria from T(x_i), S(x_i) and weights
+    r"""Compute the best approximation of the score function as
+    :math:`x \rightarrow \theta\cdot T(x)` using a weighted L2 criteria from
+    :math:`T(x_i)`, :math:`S(x_i)` and weights.
+
+    This amounts to a weighted linear least square problem.
 
     """
     if weights is None:
@@ -138,7 +140,7 @@ def _solve_in_kl(
 
 class SurPACSolver(BayesSolver):
     r"""
-    Main class for Bayesian optimisation using the score approximation method
+    Main class for Catoni's PAC-Bayes bound minimisation using SurPAC-CE algorithm
 
     ------------------------------- BACKGROUND -------------------------------
 
@@ -147,8 +149,8 @@ class SurPACSolver(BayesSolver):
 
     For a parametric family of distribution 'proba_map' (noted $\pi(\theta)$),
     Catoni's bound is defined as
-
-        $$\pi(\theta)[S] + temperature * KL(\pi(\theta), \pi_0) $$
+    ..math::
+        \pi(\theta)[S] + temperature * KL(\pi(\theta), \pi_0)
 
     For exponential families, the prior to posterior transform amounts to
     learning the best approximation of the score of form $\theta \cdot T(x)$
@@ -354,8 +356,8 @@ class SurPACSolver(BayesSolver):
             self.silent,
             " ".join(
                 [
-                    "Starting Bayesian calibration",
-                    "(Score Approximation routine)",
+                    "Starting PAC-Bayes training",
+                    "(SurPAC routine)",
                 ]
             ),
         )
@@ -507,7 +509,8 @@ class SurPACSolver(BayesSolver):
         self.add_hist_log(weights)
 
     def optimize(self) -> None:
-        """Optimisation call. Loops update until convergence or exceeds max chain length"""
+        """Optimisation call.
+        Loops update until convergence or exceeds max chain length."""
         self.msg_begin_calib()
 
         # Main loop

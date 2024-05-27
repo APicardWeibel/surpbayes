@@ -2,7 +2,8 @@ r"""
 Probability Map class.
 
 For a parametric probability class, ProbaMap encodes the transform
-    $$\alpha \rightarrow \mathbb{P}_\alpha.$$
+..math::
+    \alpha \rightarrow \mathbb{P}_\alpha.
 
 This encoding also requires information on the derivative of the log density with respect to the
 $\alpha$ parameter.
@@ -13,7 +14,7 @@ from typing import Callable, Optional, Sequence, Tuple, Union, overload
 
 import numpy as np
 from surpbayes.misc import (_get_pre_shape, blab, interpretation, par_eval,
-                       post_modif, prod)
+                            post_modif, prod)
 from surpbayes.proba.proba import Proba, tensorize
 from surpbayes.proba.warnings import NegativeKLWarning
 from surpbayes.types import ProbaParam, ProbaParams, SamplePoint, Samples
@@ -641,7 +642,8 @@ class ProbaMap:  # pylint: disable=R0902
 
         For a distribution map $M:(\theta_1, \dots, \theta_n)-> \mathcal{P}_\theta$,
         output the distribution map
-            $$(\theta_{id_1}, \dots)$ -> M((\theta_1^*, \dots, \theta_{id_1}, \dots \theta_n^*))$
+        ..math::
+            (\theta_{id_1}, \dots)$ -> M((\theta_1^*, \dots, \theta_{id_1}, \dots \theta_n^*))
         where $\theta_i^*$ are fixed values inferred from default param.
 
         Exemple: construct a Gaussian map with fixed mean from the standard gaussian map.

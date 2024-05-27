@@ -16,12 +16,8 @@ import os
 import dill
 import numpy as np
 
-from surpbayes.bayes import (
-    OptimResultPriorIter,
-    OptimResultBayes,
-    OptimResultBayesGB,
-    load_hist_bayes,
-)
+from surpbayes.bayes import (OptimResultBayes, OptimResultBayesGB,
+                             load_hist_bayes)
 from surpbayes.load_accu import load_accu_sample_val
 from surpbayes.optim import OptimResult, OptimResultCMA
 
@@ -94,36 +90,36 @@ def load_optim_result(path) -> OptimResult:
             hyperparams=hyperparams,
         )
 
-    if opti_type == "OptimResultPriorIter":
-        path_full_sample = os.path.join(path, "full_sample.csv")
-        if os.path.isfile(path_full_sample):
-            full_sample = np.loadtxt(path_full_sample)
-        else:
-            full_sample = None
+    # if opti_type == "OptimResultPriorIter":
+    #     path_full_sample = os.path.join(path, "full_sample.csv")
+    #     if os.path.isfile(path_full_sample):
+    #         full_sample = np.loadtxt(path_full_sample)
+    #     else:
+    #         full_sample = None
 
-        path_track_gen = os.path.join(path, "track_gen.csv")
-        if os.path.isfile(path_track_gen):
-            track_gen = np.loadtxt(path_track_gen)
-        else:
-            track_gen = None
+    #     path_track_gen = os.path.join(path, "track_gen.csv")
+    #     if os.path.isfile(path_track_gen):
+    #         track_gen = np.loadtxt(path_track_gen)
+    #     else:
+    #         track_gen = None
 
-        path_all_scores = os.path.join(path, "all_scores.csv")
-        if os.path.isfile(path_all_scores):
-            all_scores = np.loadtxt(path_all_scores)
-        else:
-            all_scores = None
+    #     path_all_scores = os.path.join(path, "all_scores.csv")
+    #     if os.path.isfile(path_all_scores):
+    #         all_scores = np.loadtxt(path_all_scores)
+    #     else:
+    #         all_scores = None
 
-        return OptimResultPriorIter(
-            opti_param=opti_param,
-            converged=converged,
-            hist_param=hist_param,  # type: ignore
-            hist_score=hist_score,  # type: ignore
-            opti_score=opti_score,
-            full_sample=full_sample,  # type: ignore
-            track_gen=track_gen,  # type: ignore
-            all_scores=all_scores,  # type: ignore
-            hyperparams=hyperparams,
-        )
+    #     return OptimResultPriorIter(
+    #         opti_param=opti_param,
+    #         converged=converged,
+    #         hist_param=hist_param,  # type: ignore
+    #         hist_score=hist_score,  # type: ignore
+    #         opti_score=opti_score,
+    #         full_sample=full_sample,  # type: ignore
+    #         track_gen=track_gen,  # type: ignore
+    #         all_scores=all_scores,  # type: ignore
+    #         hyperparams=hyperparams,
+    #     )
 
     if opti_type == "OptimResultBayesGB":
         if opti_score is None:

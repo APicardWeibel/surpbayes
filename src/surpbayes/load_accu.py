@@ -1,3 +1,5 @@
+"""AccuSampleVal object loader"""
+
 import os
 import warnings
 

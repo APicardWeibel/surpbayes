@@ -10,13 +10,10 @@ These integrals typically involve a function $f$ which is costly to evaluate. Pr
 of $f$ at a fixed sample $(x_i)$ is available.
 
 The goal of the present module is to compute weights $(\omega_i)$, such that
-    $$\sum g(x_i)\omega_i \simeq  \pi(\theta)[g] $$
-for all function $g$.
+..math::
+    \sum g(x_i)\omega_i \simeq  \pi(\theta)[g] 
+for all function g.
 """
 
-from .monte_carlo import (
-    get_weights_mc,
-    get_weights_mc_approx,
-    get_weights_mc_approx_gauss,
-    get_weights_mc_gauss,
-)
+from .monte_carlo import (get_weights_mc, get_weights_mc_approx,
+                          get_weights_mc_approx_gauss, get_weights_mc_gauss)

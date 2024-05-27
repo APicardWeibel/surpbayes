@@ -3,7 +3,6 @@ from typing import Callable
 
 import numpy as np
 from multiprocess import Pool
-
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.misc import blab
 from surpbayes.optim.optim_result import OptimResult
@@ -29,7 +28,7 @@ class Optimizer:
         self.vectorized = vectorized
 
         if self.parallel:
-            self.pool = Pool()
+            self.pool = Pool() # pylint: disable=E1102
         else:
             self.pool = None
 
@@ -47,7 +46,7 @@ class Optimizer:
     def msg_end_calib(self) -> None:
         blab(self.silent, "Optimisation procedure completed")
         if self.converged:
-            blab(self.silent, f"Converged after {self.count} iterations")
+            blab(self.silent, "Converged")
         else:
             blab(self.silent, "Did not converge")
 
@@ -135,6 +134,13 @@ class IterOptimizer(Optimizer):
         self.hist_log = AccuSampleVal(self.param.shape, n_tot=2 + chain_length)
         self.add_log()
 
+    def msg_end_calib(self) -> None:
+        blab(self.silent, "Optimisation procedure completed")
+        if self.converged:
+            blab(self.silent, f"Converged after {self.count} iterations")
+        else:
+            blab(self.silent, "Did not converge")
+
     def add_log(self):
         """Logs the result of the update to the history of the optimisation routine"""
         self.hist_log.add1(self.param, self.score)
@@ -148,7 +154,9 @@ class IterOptimizer(Optimizer):
         # No convergence check here
 
     def _optimize(self):
-        """Main optimisation calls. Loops on update method until convergence or exceeds max evaluations"""
+        """Main optimisation calls. Loops on update method until convergence or exceeds max evaluations
+        If parallel, properly closes pool of workers even in case of exception.
+        """
         try:
             while (self.count < self.chain_length) & (not self.converged):
                 self.update()
@@ -186,7 +194,7 @@ class IterOptimizer(Optimizer):
             self.converged = False
 
     def mfun(self, xs):
-        """Multiple calls to 'fun' with automatic parallelisation/vectorisation handling"""
+        """Multiple calls to 'fun' with parallelisation/vectorisation handling"""
         if self.parallel:
             return np.array(self.pool.map(self.loc_fun, xs))
         elif self.vectorized:

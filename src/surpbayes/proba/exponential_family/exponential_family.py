@@ -2,11 +2,13 @@ r"""
 Class for Exponential family of probability distributions.
 
 Exponential families, using the natural parametrisation, have densities
-$$ f_\theta(x) = \exp(\theta \cdot T(x) - g(\theta) + h(x)) $$
+..math::
+    f_\theta(x) = \exp(\theta \cdot T(x) - g(\theta) + h(x))
 with respect to a common distribution.
 
 The Kullback--Leibler divergence has a closed form expression which amounts to a Bregman divergence
-$$ KL(f_a, f_b) = g(b) - g(a) - (b - a) . nabla g(a).$$
+..math::
+    KL(f_a, f_b) = g(b) - g(a) - (b - a) . nabla g(a).
 
 This allows for easy differentiation, provided the Hessian of $g$ is known.
 
@@ -35,6 +37,15 @@ from surpbayes.types import ProbaParam, Samples
 
 
 def normalised_check(g: Callable[[ProbaParam], float]) -> Callable[[ProbaParam], float]:
+    r""" Decorator for log renormalisation functions, changing failure behavior (infinite,
+    exception) to raising RenormError exception.
+    
+    Arg:
+        g: the log renormalisation function
+    return:
+        fun: modified log renormalisation function, raising RenormError if g(proba_par) raises
+            an exception or is infinite, and is not returns g(proba_par)
+    """
     def fun(proba_param: ProbaParam):
         try:
             out = g(proba_param)
@@ -52,7 +63,8 @@ class ExponentialFamily(ProbaMap):
     Subclass of ProbaMap for Exponential families.
 
     Exponential families have densities of form
-        $$f_\†heta(x) = \exp(\theta \cdot T(x) - g(\theta) + h(x))$$
+    ..math::
+        f_\†heta(x) = \exp(\theta \cdot T(x) - g(\theta) + h(x))
 
     (h can be omitted since it can be hidden in the reference measure).
 
@@ -84,8 +96,9 @@ class ExponentialFamily(ProbaMap):
 
         where f is the density.
 
-        Natural parametrisation is required to efficiently compute KL. For change of parametrisation,
-        use reparametrize which maintains efficient computation of KL and its gradient.
+        Natural parametrisation is required to efficiently compute KL. For change of
+        parametrisation, use reparametrize which maintains efficient computation of KL
+        and its gradient.
         """
         normed_log_dens = h is not None
 
@@ -199,14 +212,18 @@ class ExponentialFamily(ProbaMap):
 
     @property
     def T(self):
+        r"""T function defining the exponential family (log densities
+        of form :math:`\theta\cdot T - h(x) + g(\theta)`"""
         return self._T
 
     @property
     def der_T(self):
+        """Derivative of T function"""
         return self._der_T
 
     @property
     def h(self):
+        """Carrier measure (None interpreted as Lebesgue)"""
         return self._h
 
     def kl(
@@ -220,8 +237,8 @@ class ExponentialFamily(ProbaMap):
         defined by their prior parameters.
 
         Args:
-            param_1, param_0 are 2 prior parameters
-            n_sample, parallle: Disregarded
+            param_1, param_0 are 2 proba parameters
+            n_sample: disregarded
 
         Output:
             KL(proba_1, proba_0) computed through

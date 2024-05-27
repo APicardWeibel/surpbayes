@@ -1,7 +1,7 @@
 """
 AccuSampleVal class.
 
-Meant to be used to collect $(x, f(x))$ evaluations.
+Meant to be used to collect :math:`(x, f(x))` evaluations.
 
 New evaluations can be added using the add method. Data suppression is performed lazily.
 
@@ -65,14 +65,17 @@ class AccuSampleVal:
 
     @property
     def n_gen(self):
+        """Number of generation (i.e. data adding evenements)"""
         return self._n_gen
 
     @property
     def n_filled(self):
+        """Number of memory slots filled"""
         return self._n_filled
 
     @property
     def n_tot(self):
+        """Total number of memory slots prepared"""
         return self._n_tot
 
     def extend_memory(self, n_add: int) -> None:
@@ -148,6 +151,7 @@ class AccuSampleVal:
 
     def suppr_gen(self, K: int):
         """Deletes the last K generations in the memory (lazy delete)"""
+        # Backup gen_tracker
         gen_tracker = self._gen_tracker.copy()
         gen_tracker = np.clip(gen_tracker - K, a_min=-1, a_max=None)
 
@@ -155,7 +159,7 @@ class AccuSampleVal:
         self._n_filled = np.sum(gen_tracker >= 0, dtype=int)
         self._gen_tracker = gen_tracker
 
-    def sample(self, k: Optional[int] = None):
+    def sample(self, k: Optional[int] = None)->Samples:
         """
         Clean look at the samples
 
@@ -169,7 +173,7 @@ class AccuSampleVal:
 
         return self._sample[init : self._n_filled]
 
-    def vals(self, k: Optional[int] = None):
+    def vals(self, k: Optional[int] = None)->np.ndarray:
         """
         Clean look at the sample evaluations
 

@@ -108,7 +108,7 @@ class GDBayesSolver(BayesSolver):
             self.silent,
             " ".join(
                 [
-                    "Starting Bayesian calibration",
+                    "Starting PAC-Bayes training",
                     "(Gradient descent routine)",
                 ]
             ),
@@ -244,7 +244,7 @@ class GradientBasedBayesSolver(GDBayesSolver):
             self.silent,
             " ".join(
                 [
-                    "Starting Bayesian calibration",
+                    "Starting PAC-Bayes training",
                     "(Gradient descent routine",
                     "with weight correction)",
                 ]

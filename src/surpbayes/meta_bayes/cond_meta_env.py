@@ -49,14 +49,15 @@ class CondMetaEnv(MetaLearningEnv):
     function and temperature for task $i$, $\hat{\theta}_i = \hat{\theta}_i(\theta_0)$ the
     posterior parameter using prior $\theta_0$, the meta score of prior parameter $\theta_0$ is
     defined as $ S(\theta_0) = \sum_i S_i(\theta_0) $ where
-        $$ S_i(\theta_0)
-        = \pi(\hat{\theta}_i)[R_i] + \lambda_i KL(\pi(\hat{\theta}_i), \pi(\theta_0))$$
+    ..math::
+        S_i(\theta_0)
+        = \pi(\hat{\theta}_i)[R_i] + \lambda_i KL(\pi(\hat{\theta}_i), \pi(\theta_0))
 
     In the context of conditional meta learning, the prior is constructed from a meta parameter,
     which is learnt, and taks meta data $m_i$. As such, the meta score of meta param $\alpha$ is
     defined as:
-
-        $$ S(\alpha) = \sum_i S_i(T(\alpha, m_i)) $$
+    ..math::
+        S(\alpha) = \sum_i S_i(T(\alpha, m_i))
 
     where $T$ is the map from meta data to prior parameter. Noting $\theta_i = T(\alpha, m_i)$,
     the derivative of $S_i(\theta_i)$ with respect to $\theta_i$ has simple expression

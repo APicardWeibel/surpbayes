@@ -3,7 +3,6 @@
 from typing import Union
 
 import numpy as np
-
 from surpbayes.optim.generative_optim.cma_optimizer import CMAOptimizer
 from surpbayes.optim.generative_optim.mh_optimizer import MHOptimizer
 from surpbayes.optim.optim_result import OptimResult
