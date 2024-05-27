@@ -7,14 +7,14 @@ Useful to check that:
 """
 
 import numpy as np
-from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
+from surpbayes.proba.exponential_family.pre_exponential_family import \
+    PreExpFamily
 from surpbayes.proba.proba_map import ProbaMap
 from surpbayes.types import ProbaParam
 
 
 class ImplementationError(Exception):
     """Raise an error when something seems to be badly implemented"""
-
 
 def check_grad_kl(
     pmap: ProbaMap,
@@ -92,6 +92,16 @@ def check_log_dens_der(
 ):
     """
     Check coherence of log_dens_der in a ProbaMap.
+    This function will not work for ProbaMap objects not
+    accepting all parameters (e.g. exponential families with
+    some unrenormalisable parameters).
+
+    Note moreover that this function:
+    - performs a coherence check (but there could be multiple
+        coherent errors)
+    - can raise an error even if no mistake (for improper tol and delta).
+
+    It is not therefore conclusive, but only a helper.
     """
     accu = np.zeros((n1, n2, n3))
 

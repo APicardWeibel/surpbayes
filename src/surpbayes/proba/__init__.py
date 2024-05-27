@@ -196,16 +196,8 @@ For future considerations:
 from ..types import ProbaParam, SamplePoint
 from ._errors import RenormError
 from .exponential_family import ExponentialFamily, PreExpFamily
-from .gauss import (
-    BlockDiagGauss,
-    BlockDiagGaussMap,
-    FactCovGaussianMap,
-    FixedCovGaussianMap,
-    GaussHypercubeMap,
-    Gaussian,
-    GaussianMap,
-    TensorizedGaussian,
-    TensorizedGaussianMap,
-)
+from .gauss import (BlockDiagGauss, BlockDiagGaussMap, FactCovGaussianMap,
+                    FixedCovGaussianMap, GaussHypercubeMap, Gaussian,
+                    GaussianMap, TensorizedGaussian, TensorizedGaussianMap)
 from .proba import Proba, add, from_sample, mixture, tensorize
 from .proba_map import ProbaMap, map_tensorize

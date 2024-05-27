@@ -12,7 +12,7 @@ class ADM1Param:
     ADM1Param and are no longer fixed to their default values, to accomodate
     more situations.
 
-    Default values are inferred from Rosen and Jeppson (TODO: Cite here)
+    Default values are inferred from Rosen and Jeppsson (doi: 10.2166/wst.2006.521)
     """
 
     default_param = {
@@ -933,4 +933,4 @@ def load_dig_param(path: str) -> ADM1Param:
     Loads a digester parameter from a JSON file.
     """
     param_pd = pd.read_json(path, orient="index", typ="Series")
-    return ADM1Param(param_pd.to_dict())
+    return ADM1Param(param_pd.to_dict()) #pylint: disable=E1101
