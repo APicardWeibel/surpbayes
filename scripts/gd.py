@@ -81,9 +81,10 @@ def main(per_step:int, eta:float, budget:int=9600):
 
             print("Not reevaluating, since each estimate is unbiased + independant")
             # Note that when per_step=80, the estimations of the performance are
-            # still unbiased, but with larger fluctuations (variance twice as large)
+            # still unbiased/independent, but with larger fluctuations (variance twice
+            # as large)
             # This will have some impact in the uncertainty quantification between
-            # repeats (increase variance), but no expected to be significant.
+            # repeats (increase variance), but no expected to be too significant.
 
             score_evol = np.array(list(opt_res.hist_score) + [opti_score])
             results.append(score_evol)

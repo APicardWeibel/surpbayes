@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from surpbayes.pyadm1.basic_classes.cod_vs_conv import COD_VS
 
 influent_state_cols = [
     "time",
@@ -31,6 +32,8 @@ influent_state_cols = [
     "S_anion",  # kmole M-3
     "Q",  # M3 Day-1
 ]
+
+influent_state_col_dict = {name:i for i, name in enumerate(influent_state_cols)}
 
 influent_state_units = {
     "time": "Day",
@@ -64,11 +67,11 @@ influent_state_units = {
 }
 
 # Build time assert: check that all columns have a unit
-
 __delta = set(influent_state_cols).symmetric_difference(influent_state_units)
 if len(__delta) > 0:
     raise ValueError(f"Unnexplained columns in Feed: {__delta}")
 
+cod_vs_feed_cols = [influent_state_col_dict[x] for x in COD_VS.keys()]
 
 class Feed:
     def __init__(self, df: pd.DataFrame):
@@ -95,7 +98,7 @@ class Feed:
         time = value["time"].to_numpy()
         if (len(time) > 1) and np.any(time[1:] - time[:-1] <= 0):
             raise ValueError("Time information should be increasing")
-        self._df = value[influent_state_cols]
+        self._df = value[influent_state_cols] # Reorder
 
     def save(self, path):
         """Save DigesterFeed object to a .csv file"""

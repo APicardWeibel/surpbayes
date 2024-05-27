@@ -1,6 +1,7 @@
 # import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from surpbayes.pyadm1.basic_classes.cod_vs_conv import COD_VS
 
 
 class NegativeStates(ValueError):
@@ -101,6 +102,10 @@ predict_units_dict = {
     "VS": "kgVS M-3",
     "VSR": "ratio",
 }
+
+pred_col_dict = {name:i for i, name in enumerate(pred_col)}
+
+cod_vs_dig_states_cols = [pred_col_dict[x] for x in COD_VS.keys()]
 
 class DigesterStates:
     def __init__(self, df: pd.DataFrame):

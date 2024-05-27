@@ -7,11 +7,12 @@ Added to original ADM1 implementation by (https://github.com/CaptainFerMag/PyADM
 from typing import Optional
 
 import numpy as np
-from surpbayes.pyadm1._helper_pd_np import (cod_vs_dig_states_cols,
-                                          cod_vs_feed_cols, cod_vs_values,
-                                          influent_state_col)
+from surpbayes.pyadm1.basic_classes.cod_vs_conv import cod_vs_values
+from surpbayes.pyadm1.basic_classes.feed import (cod_vs_feed_cols,
+                                                 influent_state_col_dict)
+from surpbayes.pyadm1.basic_classes.obs import cod_vs_dig_states_cols
 
-q_col = influent_state_col["Q"]
+q_col = influent_state_col_dict["Q"]
 
 
 def feed_vs(
