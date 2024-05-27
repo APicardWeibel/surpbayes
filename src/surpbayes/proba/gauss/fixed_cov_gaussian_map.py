@@ -13,7 +13,8 @@ from numpy.typing import ArrayLike
 from surpbayes.misc import _get_pre_shape, check_shape, prod
 from surpbayes.proba._errors import RenormError
 from surpbayes.proba._helper import _shape_info
-from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
+from surpbayes.proba.exponential_family.pre_exponential_family import \
+    PreExpFamily
 from surpbayes.proba.gauss.Gauss import Gaussian, inverse_cov
 from surpbayes.types import ProbaParam, Samples
 
@@ -26,7 +27,7 @@ def exp_family_gauss_fixed_cov(
     r"""Prepare functions to interpret fixed cov gaussian distributions as exponential family
 
     The output T works for the following parametrisation of a gaussian distribution:
-    ..maty::
+    ..math::
         (Cov @ mean, (Cov_{i,i})_i, (Cov_{i,j})_{i>j}).
 
     -.5 * (mean - x) Cov (mean - x)

@@ -8,12 +8,8 @@ from typing import Optional
 import dill
 import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes import (
-    AccuSampleValDens,
-    AccuSampleValExp,
-    infer_pb_routine,
-    pacbayes_minimize,
-)
+from surpbayes.bayes import (AccuSampleValDens, AccuSampleValExp,
+                             infer_pb_routine, pacbayes_minimize)
 from surpbayes.meta_bayes.hist_meta import HistMeta
 from surpbayes.meta_bayes.task import Task
 from surpbayes.misc import blab, prod
@@ -280,8 +276,11 @@ class MetaLearningEnv:
         Outputs:
             None (the task post_param, end_score and accu_sample_val attributes are modified)
         """
-        loc_hyperparams = self.hyperparams.copy()
-        loc_hyperparams.update(hyperparams)
+        if hyperparams:
+            loc_hyperparams = self.hyperparams.copy()
+            loc_hyperparams.update(hyperparams)
+        else: 
+            loc_hyperparams = self.hyperparams
 
         # Perform the inner algorithm
         opt_res = pacbayes_minimize(
@@ -328,11 +327,14 @@ class MetaLearningEnv:
             )
 
     def _init_grad(self):
+        """Constructs an array full of 0 with adequate shape for gradient"""
         if self.work_in_t:
             return np.zeros(self.proba_map.t_shape)
         return np.zeros(self.proba_map.proba_param_shape)
 
     def _get_eta_use(self, grad: np.ndarray, kl_max: float, eta_loc: float) -> float:
+        """Computes maximum step size allowed for meta gradient ensuring that the
+        new prior is at pseudo distance less than kl_max in kl to the current prior"""
         if self.work_in_t:
             return _solve_in_kl_pre_exp(
                 proba_map=self.proba_map,
@@ -350,6 +352,8 @@ class MetaLearningEnv:
         )
 
     def _get_new_prior_param(self, eta_use: float, grad: np.ndarray) -> ProbaParam:
+        """From gradient step and step size, compute new prior parameter (deals with
+        pre exp family/ exp family)"""
         if self.work_in_t:
             return self.proba_map.T_to_param(
                 self.proba_map.param_to_T(self.prior_param) + eta_use * grad
@@ -364,6 +368,7 @@ class MetaLearningEnv:
         Args:
             epochs (int): number of learning epochs (default 1)
             eta (float): step size for gradient descent (default 0.01)
+            kl_max (float): maximum step size (in KL) between two successive prior
             mini_batch_size (int): size of mini batches.
             silent (bool): should there be any print
 
@@ -376,9 +381,7 @@ class MetaLearningEnv:
         self.hist_meta.extend_memory(epochs)
 
         # Extend memory for tasks (once and for all rather than iteratively)
-        [
-            self._extend_memo(task, epochs) for task in self.list_task
-        ]  # pylint: disable = W0106
+        self.extend_tasks_memo(epochs)
 
         # Define step size
         eta_loc = eta / self.n_task
@@ -444,6 +447,10 @@ class MetaLearningEnv:
         if n_fill < n_remain:
             task.accu_sample_val.extend_memory(n_fill - n_remain)  # type: ignore
 
+    def extend_tasks_memo(self, epochs:int):
+        for task in self.list_task:
+            self._extend_memo(task, epochs)
+
     def meta_learn_batch(
         self, epochs=1, eta=0.01, kl_tol=10**-3, kl_max=1.0, silent=False
     ):
@@ -466,10 +473,7 @@ class MetaLearningEnv:
         # Extend history for meta learning log
         self.hist_meta.extend_memory(epochs)
 
-        # Iterate extend memory over tasks
-        [
-            self._extend_memo(task, epochs) for task in self.list_task
-        ]  # pylint:disable=W0106
+        self.extend_tasks_memo(epochs)
 
         # Define step size
         eta_loc = eta / self.n_task

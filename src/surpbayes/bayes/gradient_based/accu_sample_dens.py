@@ -1,7 +1,8 @@
 """ 
 AccuSampleValDens class
 
-Inherited from AccuSampleVal, with added half_ldens information (log density with respect to the distribution it was generated)
+Inherited from AccuSampleVal, with added half_ldens information (log density with respect to the
+distribution it was generated)
 """
 
 import os
