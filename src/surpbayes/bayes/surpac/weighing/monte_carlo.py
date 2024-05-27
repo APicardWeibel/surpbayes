@@ -2,12 +2,12 @@ r"""
 Sub module for weighing a sample of points in order to approximate a distribution.
 
 Methods in the Bayesian calibration module rely on estimation of integrals with respect to
-variable distributions $\pi(\theta)$.
+variable distributions :math:`\pi(\theta):.
 
-These integrals typically involve a function $f$ which is costly to evaluate. Previous evaluations
-of $f$ at a fixed sample :math:`(x_i)` is available.
+These integrals typically involve a function f which is costly to evaluate. Previous evaluations
+of f at a fixed sample :math:`(x_i)` is available.
 
-The goal of the present module is to compute weights $(\omega_i)$, such that
+The goal of the present module is to compute weights :math:`(\omega_i)`, such that
 ..math::
     \sum g(x_i)\omega_i \simeq  \pi(\theta)[g]
 for all function :math:`g`.
@@ -16,15 +16,15 @@ The weights approximated here are defined thus:
 For sample :math:`x_i`, consider partition :math:`S(x_i) = \{x, i \in \arg\min_j (d(x,x_j))\}`.
 Consider :math:`\omega_i = \pi_\theta[S(x_i)]`.
 
-For standard distribution, the distance $d$ used is the standard 2 norm between vectors.
-For Gaussian distribution, the distance $d$ used is modified 2 norm based on scalar product
+For standard distribution, the distance d used is the standard 2 norm between vectors.
+For Gaussian distribution, the distance d used is modified 2 norm based on scalar product
 
 ..math::
     \langle a, b \rangle  = a^t \cdot cov^{-1} b.
 
-The choice of weights $\omega_i$ amounts to replacing :math:`g` by a 1NN approximation for the integral.
+The choice of weights :math:`\omega_i` amounts to replacing :math:`g` by a 1NN approximation for the integral.
 
-In practice, computation of weights $\omega_i$ as defined above is difficult, as it involves
+In practice, computation of weights :math:`\omega_i` as defined above is difficult, as it involves
 integrating the density on polygons. The weights :math:`\omega_i` are therefore approximated by a Monte
 Carlo procedure. A sample :math:`\tilde{x}_j` is generated from distribution :math:`\pi(\theta)`, and
 :math:`\hat{\omega_i}` is defined as a fraction of sample :math:`\tilde{x}_j` having closest neighbor :math:`x_i`.

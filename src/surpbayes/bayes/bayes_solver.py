@@ -10,9 +10,6 @@ from surpbayes.misc import blab, prod
 from surpbayes.proba import ProbaMap
 from surpbayes.types import ProbaParam
 
-# from multiprocess import Pool  # pylint: disable=E0611
-
-
 class BayesSolver:
     r"""
     Main class for PAC-Bayes objective minimisation.

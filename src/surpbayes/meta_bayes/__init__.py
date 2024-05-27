@@ -9,34 +9,35 @@ Meta Learning is a way to learn inductive bias, in order to speed up learning or
 performances when data is scarce.
 
 A simple way to add inductive bias to the classic empirical risk minimisation learning algorithm is
-to add a penalisation term. As such, for a risk $\hat{R}$, the calibrated parameter is defined as
+to add a penalisation term. As such, for a risk :math:`\hat{R}`, the calibrated parameter is defined as
 ..math::
     \hat\theta \in \arg\min \hat{R}(\theta) + \lambda P(\theta, \theta_0)
 
-where $P$ is a penalisation function and $\lambda$ controlling the learning rate.
+where P is a penalisation function and :math:`\lambda` controlling the learning rate.
 
 In a meta learning context, one has a variety of tasks, which we can sum up in a collection of
-empirical risks $\hat{R}_i$. We also consider different learning rates $\lambda_i$ for each task.
+empirical risks :math:`\hat{R}_i`. We also consider different learning rates :math:`\lambda_i`
+for each task.
 
-For a given inductive bias $\theta_0$, which we will name meta parameter from now on, one can
+For a given inductive bias :math:`\theta_0`, which we will name meta parameter from now on, one can
 consider the penalized meta score
 ..math::
     S(\theta_0) = \sum_i \hat{R}_i(\hat{\theta}_i) + \lambda_i P(\hat{\theta}_i, \theta_0)
-where $\hat{\theta}_i$ is the minimizer of the penalized risk, and as such is a function of
-$\theta_0$.
+where :math:`\hat{\theta}_i` is the minimizer of the penalized risk, and as such is a function of
+:math:`\theta_0`.
 
 Assuming that the score and penalisation are differentiable, then the meta score derivative can be
 computed as:
 ..math::
     \nabla S(\theta_0) = \sum_i \lambda_i \nabla_2 P(\hat{\theta}_i, \theta_0).
 
-This formula relies on the fact that the penalised score is minimized at $\hat{\theta}_i$, and
-therefore the gradient of the penalised score with respect to $\hat{\theta}_i$ is $0$.
+This formula relies on the fact that the penalised score is minimized at :math:`\hat{\theta}_i`, and
+therefore the gradient of the penalised score with respect to :math:`\hat{\theta}_i` is 0.
 
 Optimisation of this criteria is straightforward, as it can alternate between calibration for each
-task (learn $\hat{\theta}_i$ from current $\theta_0$) and correcting the value of $\theta_0$ using
-gradient descent after calibration
-($\theta_0 = \theta_0 -\eta\lambda_i \nabla_2 P(\hat{\theta}_i, \theta_0)$).
+task (learn :math:`\hat{\theta}_i` from current :math:`\theta_0`) and correcting the value of
+:math:`\theta_0` using gradient descent after calibration
+(:math:`\theta_0 = \theta_0 -\eta\lambda_i \nabla_2 P(\hat{\theta}_i, \theta_0)`).
 
 II. Transcription to PAC-Bayesian algorithms
 PAC-Bayesian algorithms fit into the framework described above, the posterior being defined as the

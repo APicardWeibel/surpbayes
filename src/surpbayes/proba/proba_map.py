@@ -6,7 +6,7 @@ For a parametric probability class, ProbaMap encodes the transform
     \alpha \rightarrow \mathbb{P}_\alpha.
 
 This encoding also requires information on the derivative of the log density with respect to the
-$\alpha$ parameter.
+:math:`\alpha` parameter.
 """
 
 import warnings
@@ -29,13 +29,13 @@ class ProbaMap:  # pylint: disable=R0902
         map, the actual mapping
         log_dens_der, a function of PriorParam outputing a function of PredictParam
             outputing a PriorParam such
-        $\log_dens(x+ alpha, y ) - log_dens(x, y) \simeq log_dens_der(x)(y) . \alpha$
+        :math:`\log_dens(x+ alpha, y ) - log_dens(x, y) \simeq log_dens_der(x)(y) \cdot \alpha`
         for all small prior parameters alpha.
         proba_param_shape, the shape of the parameter describing the distribution
         sample_shape, the shared shape of the sample of every distribution in the family
 
     Note on log_dens_der input/output:
-    Assuming that sqmple_shape = (s1, ..., sk) and that proba_param_shape is of shape (d1, ..., dp)
+    Assuming that sample\_shape = (s1, ..., sk) and that proba_param_shape is of shape (d1, ..., dp)
     Then log_dens_der(param) is a function which takes input of shape (n1, ..., nm, s1, ..., sk)
         and ouputs an array of shape (n1, ..., nm, d1, ..., dp)
 
@@ -66,8 +66,9 @@ class ProbaMap:  # pylint: disable=R0902
                 closure takes as input Samples and returns the derivative of log densities of the
                 distribution mapped by the ProbaParam, the derivative being with respect to the
                 ProbaParam. Mathematically, it is the derivative of the function
-                    $theta, x \rightarrow prob_map(theta).log_dens(x)$
-                with respect to $\theta$.
+                    ..math::
+                        theta, x \rightarrow prob_map(theta).log_dens(x)
+                with respect to :math:`\theta`.
             ref_param: reference ProbaParam. Optional.
             proba_param_shape: shape of ProbaParam objects accepted by prob_map. Optional.
             sample_shape: shared sample shape of the probability distributions outputed by
@@ -290,12 +291,13 @@ class ProbaMap:  # pylint: disable=R0902
 
         Args:
             param_1, param_0 are 2 prior parameters
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
             n_sample, number of points used to estimate the f-divergence
 
         Output:
-            $D_f(proba_1, proba_0)$ approximated as $\sum_i(f(proba_1(\phi_i)/proba_0(\phi_i))$
-            with $\phi_i$ sampled through proba_0.gen (typically i.i.d.)
+            :math:`D_f(proba_1, proba_0)` approximated as
+            :math:`\sum_i(f(proba_1(\phi_i)/proba_0(\phi_i))` with :math:`\phi_i` sampled 
+            through proba_0.gen (typically i.i.d.)
 
         Note:
             For a ProbaMap object obtained as the result of .reparametrize method with
@@ -315,7 +317,7 @@ class ProbaMap:  # pylint: disable=R0902
 
         Args:
             param_0, the parameter describing the second distribution.
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
                 Should be vectorized
             f_der, the derivative of f. Should be vectorized
         """
@@ -368,7 +370,7 @@ class ProbaMap:  # pylint: disable=R0902
 
         Args:
             param_1, the parameter describing the first distribution.
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
             f_der, the derivative of f
         """
         return self.grad_f_div(
@@ -385,12 +387,12 @@ class ProbaMap:  # pylint: disable=R0902
     ) -> Tuple[np.ndarray, Union[np.ndarray, float]]:
         r"""
         Compute the derivative of:
-        F(alpha) -> \int f(x) exp(log_p(alpha, x)) dmu(x) / \int exp(log_p(alpha, x)) dmu(x)
+        ..math::
+            F(alpha) -> \int f(x) \frac{\exp(log p(alpha, x)) d\mu(x)}}{\int \exp(log p(alpha, x)) d\mu(x)}
 
         Computed through:
-            $dF =
-            \int f(x) d log_p(alpha, x)  dp(alpha, x)
-            - \int d log_p(alpha, x)  dp(alpha, x) \int f(x) dp(alpha, x)$
+        ..math::
+            dF = \int f(x) d log p(alpha, x)  dp(alpha, x) - \int d log p(alpha, x)  dp(alpha, x) \int f(x) dp(alpha, x)
 
         Note: For GD algorithms, integrate_der might not be the best option since constructing large
             samples/ evaluating the function on the sample might be prohibitive. Techniques are
@@ -428,9 +430,8 @@ class ProbaMap:  # pylint: disable=R0902
         F(alpha) -> \int f(x) exp(log_p(alpha, x)) dmu(x) / \int exp(log_p(alpha, x)) dmu(x)
 
         Computed through:
-            $dF =
-            \int f(x) d log_p(alpha, x)  dp(alpha, x)
-            - \int d log_p(alpha, x)  dp(alpha, x) \int f(x) dp(alpha, x)$
+        ..math::
+            dF = \int f(x) d log_p(alpha, x)  dp(alpha, x) - \int d log_p(alpha, x)  dp(alpha, x) \int f(x) dp(alpha, x)
 
         Note: For GD algorithms, integrate_der might not be the best option since constructing large
             samples/ evaluating the function on the sample might be prohibitive. Techniques are
@@ -640,11 +641,11 @@ class ProbaMap:  # pylint: disable=R0902
         r"""
         Define a new ProbaMap object from partial ProbaParam object.
 
-        For a distribution map $M:(\theta_1, \dots, \theta_n)-> \mathcal{P}_\theta$,
+        For a distribution map :math:`M:(\theta_1, \dots, \theta_n)-> \mathcal{P}_\theta`,
         output the distribution map
         ..math::
-            (\theta_{id_1}, \dots)$ -> M((\theta_1^*, \dots, \theta_{id_1}, \dots \theta_n^*))
-        where $\theta_i^*$ are fixed values inferred from default param.
+            (\theta_{id_1}, \dots) \mapsto M((\theta_1^*, \dots, \theta_{id_1}, \dots \theta_n^*))
+        where :math:`\theta_i^*` are fixed values inferred from default param.
 
         Exemple: construct a Gaussian map with fixed mean from the standard gaussian map.
         While could this also be achieved through reparametrize function, we can avoid using the
@@ -768,8 +769,8 @@ class ProbaMap:  # pylint: disable=R0902
         der_transform: Optional[Callable[[Samples], np.ndarray]] = None,
     ):
         r"""
-        Transform the Class of probability $X_\theta \sim \mathbb{P}_{\theta}$ to the class of
-            probability $transform(X_\theta)$
+        Transform the Class of probability :math:`X_\theta \sim \mathbb{P}_{\theta}` to the
+        class of probability :math:`transform(X_\theta)`
 
         Important:
             transform MUST be bijective, else computations for log_dens_der, kl, grad_kl,
@@ -979,12 +980,12 @@ class TransformedProbaMap(ProbaMap):
 
         Args:
             param_1, param_0 are 2 prior parameters
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
             n_sample, number of points used to estimate the f-divergence
 
         Output:
-            $D_f(proba_1, proba_0)$ approximated as $\sum_i(f(proba_1(\phi_i)/proba_0(\phi_i))$
-            with $\phi_i$ sampled through proba_0.gen (typically i.i.d.)
+            :math:`D_f(proba_1, proba_0)` approximated as :math:`\sum_i f(\frac{proba_1(\phi_i)}{proba_0(\phi_i))}`
+            with :math:`\phi_i` sampled through proba_0.gen (typically i.i.d.)
 
         Note:
             For a ProbaMap object obtained as the result of .reparametrize method with
@@ -1004,7 +1005,7 @@ class TransformedProbaMap(ProbaMap):
 
         Args:
             param_0, the parameter describing the second distribution.
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
                 Should be vectorized
             f_der, the derivative of f. Should be vectorized
         """
@@ -1021,7 +1022,7 @@ class TransformedProbaMap(ProbaMap):
 
         Args:
             param_1, the parameter describing the first distribution.
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
             f_der, the derivative of f
         """
         return self._grad_right_f_div(param_1, f, f_der)

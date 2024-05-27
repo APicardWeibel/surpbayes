@@ -134,17 +134,18 @@ class MetaLearningEnv:
     improve stability, the prior distribution is forced to evolve slowly (in term of KL divergence)
 
     Gradient of the meta score for Catoni Pac-Bayes.
-    For a proba map $\pi$, noting $\theta_0$ the prior parameter, $R_i$, $\lambda_i$ the score
-    function and temperature for task $i$, $\hat{\theta}_i = \hat{\theta}_i(\theta_0)$ the
-    posterior parameter using prior $\theta_0$, the meta score of prior parameter $\theta_0$ is
-    defined as
+    For a proba map :math:`\pi`, noting :math:`\theta_0` the prior parameter, :math:`R_i`,
+    :math:`\lambda_i` the score function and temperature for task i,
+    :math:`\hat{\theta}_i = \hat{\theta}_i(\theta_0)` the posterior parameter using prior
+    :math:`\theta_0`, the meta score of prior parameter :math:`\theta_0` is defined as
     ..math::
         S(\theta_0)
         = \sum_i \pi(\hat{\theta}_i)[R_i] + \lambda_i KL(\pi(\hat{\theta}_i), \pi(\theta_0))
 
-    The derivative of the meta score has simple expression $\sum \lambda_i K_i$ where $K_i$ is the
-    gradient of the Kullback--Leibler term $KL(\pi(\hat{\theta}_i), \pi(\theta_0))$ with respect to
-    $\theta_0$ at fixed $\hat{\theta}_i$ value.
+    The derivative of the meta score has simple expression :math:`\sum \lambda_i K_i` where
+    :math:`K_i` is the gradient of the Kullback--Leibler term
+    :math:`L(\pi(\hat{\theta}_i), \pi(\theta_0))` with respect to :math:`\theta_0` at fixed
+    :math:`\hat{\theta}_i` value.
     """
 
     def __init__(

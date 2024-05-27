@@ -35,7 +35,8 @@ def eq(inv_cov):
 
 def get_der_x_log_dens(prob_param: ProbaParam, exp_family: ExponentialFamily):
     """
-    Derivative of log_density with respect to $x$ for a distribution in an exponential family.
+    Derivative of log_density with respect to x (SamplePoint) for a distribution
+    in an exponential family.
     """
     dims_log_dens_help = tuple(-i - 1 for i in range(len(exp_family.proba_param_shape)))
     if exp_family.der_T is None:

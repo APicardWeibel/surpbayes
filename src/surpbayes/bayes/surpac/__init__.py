@@ -37,14 +37,14 @@ module):
 
 As mentionned above, Gaussian distributions are treated somewhat differently, since they induce a
 natural metric, have easy to compute high confidence region, and have easy to compute log density
-derivative with respect to the sample point $x$. All these properties can be used to improve the
+derivative with respect to the sample point x. All these properties can be used to improve the
 standard methods used to generate new samples (i.e. using SVGD like algorithms) and obtain weights
 (see weighing submodule).
 
 The 'PreExpFamily' and 'ExponentialFamily' rely on near duplicate implementations (changes due to
 different attribute names). The only conceptual difference lies when enforcing that
 :math:`KL(new\_post\_param, post\_param)< kl\_max`. In the case of exponential families, it can be
-supposed that the function $alpha \rightarrow KL(post\_param + alpha dir, post\_param)$ is non
+supposed that the function :math:`alpha \rightarrow KL(post\_param + alpha dir, post\_param)` is non
 decreasing, which is no longer the case for 'PreExpFamily' as the natural parametrisation is not
 used. This could lead to suboptimal choices of :math:`\alpha` and potentially to instabilities.
 

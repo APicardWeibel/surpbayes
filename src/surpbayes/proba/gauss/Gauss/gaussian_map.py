@@ -8,11 +8,12 @@ from typing import Callable, Optional
 import numpy as np
 from surpbayes.misc import _get_pre_shape, prod
 from surpbayes.proba._helper import _shape_info
-from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
+from surpbayes.proba.exponential_family.pre_exponential_family import \
+    PreExpFamily
 from surpbayes.proba.gauss.Gauss.gaussian import Gaussian
 from surpbayes.proba.gauss.Gauss.nb_helper import (_der_g, _g, _grad_kl,
-                                              _grad_right_kl, _kl, _T_to_param,
-                                              make_cov)
+                                                   _grad_right_kl, _kl,
+                                                   _T_to_param, make_cov)
 from surpbayes.proba.warnings import ShapeWarning
 from surpbayes.types import ProbaParam, Samples
 
@@ -70,21 +71,25 @@ def exp_family_gauss(
 
     Compute the T for exponential family interpretation of Gaussian distributions.
 
-    IMPORTANT: The parametrisation $\theta$ of the exponential family using the T is NOT
+    IMPORTANT: The parametrisation :math:`\theta` of the exponential family using the T is NOT
     the parametrisation used in the GaussianMap class. Note that the parametrisation used
     in the GaussianMap class can not be used for any exponential family interpretation of
     gaussians, as the covariance is mapped in a non linear fashion (incentive: the parametrisation
-    works on $R^{(d+1, d)}$).
+    works on :math:`\mathbb{R}^{(d+1, d)}`).
 
     The output T works for the following parametrisation of a gaussian distribution:
-        $(Cov @ mean, (Cov_{i,i})_i, (Cov_{i,j})_{i>j})$.
+    ..math::
+        (Cov @ mean, (Cov_{i,i})_i, (Cov_{i,j})_{i>j}).
 
     As such, x is mapped to
-        $(x, -.5 x^2, -(x_i x_j)_{i>j})$
+    ..math::
+        (x, -.5 x^2, -(x_i x_j)_{i>j})
 
-    Then $A . T(x)  = - .5 \tilde{A} .x x^t + A_0^t x
-                    = - .5 x^t \tilde{A} x + A_0^t \tilde{A}^{-1} \tilde{A} x
-                    = -.5 (x - \tilde{A}^{-1} A_0) \tilde{A} (x - \tilde{A}^{-1} A_0)$
+    Then 
+    ..math::
+        A \cdot T(x)  = - .5 \tilde{A} .x x^t + A_0^t x
+         = - .5 x^t \tilde{A} x + A_0^t \tilde{A}^{-1} \tilde{A} x
+        = -.5 (x - \tilde{A}^{-1} A_0) \tilde{A} (x - \tilde{A}^{-1} A_0)
     """
 
     sample_size, sample_shape = _shape_info(sample_size, sample_shape)  # type: ignore
@@ -136,7 +141,7 @@ class GaussianMap(PreExpFamily):
 
     The distribution param shape is (pred_param_len + 1, pred_param_len)
         - param[0] gives the mean,
-        - param[1:] is a matrix m defining the covariance through $cov = m * m^T$
+        - param[1:] is a matrix m defining the covariance through cov = m @ m.T
 
     The covariance is not used as a parameter to simplify routines such as gradient descents.
     """

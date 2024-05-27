@@ -147,13 +147,13 @@ class SurPACSolver(BayesSolver):
     SurPACSolver strives to minimize Catoni's bound through an score
     approximation method on exponential families
 
-    For a parametric family of distribution 'proba_map' (noted $\pi(\theta)$),
+    For a parametric family of distribution 'proba_map' (noted :math:`\pi(\theta)`),
     Catoni's bound is defined as
     ..math::
         \pi(\theta)[S] + temperature * KL(\pi(\theta), \pi_0)
 
     For exponential families, the prior to posterior transform amounts to
-    learning the best approximation of the score of form $\theta \cdot T(x)$
+    learning the best approximation of the score of form :math:`\theta \cdot T(x)`
     for the L2 criteria at the posterior.
 
     The learning algorithm is therefore performed by alternating learning score
@@ -161,7 +161,7 @@ class SurPACSolver(BayesSolver):
     approximation from score approximation.
 
     To improve robustness of the algorithm, the new posterior approximation is
-    allowed to be at most at a distance of 'kl_max' of the current posterior
+    allowed to be at most at a distance of 'kl\_max' of the current posterior
     approximation.
 
     The integration scheme used to approximate the score uses all previously
@@ -203,12 +203,12 @@ class SurPACSolver(BayesSolver):
             new posterior (in the sense that
             kl(post_{n+1}, post_{n}) <= kl_max). Default is 10.0
         dampen: float (0<= < 1). Contol maximum update speed of posterior. From
-            score approximation $\theta$, the posterior distribution should be
-            $\theta_0-temperature^{-1} \theta$. Using dampen >0, the update is
+            score approximation :math:`\theta, the posterior distribution should be
+            :math:`\theta_0-temperature^{-1} \theta`. Using dampen >0, the update is
                 changed to
-                $\theta_{n+1}
-                =\theta_n
-                + (1-dampen) (\theta_0-temperature^{-1} \theta - \theta_n)$
+                ..math:
+                    \theta_{n+1}=\theta_n
+                    + (1-dampen) (\theta_0-temperature^{-1} \theta - \theta_n)
             The fixed point solution of the problem remains unchanged, but
             prevents relying to much on local approximations of the score.
         chain_length: number of posterior updates.
@@ -217,13 +217,13 @@ class SurPACSolver(BayesSolver):
         per_step: number of draws from the prior evaluated through 'fun' at
             update step
         kltol: termination criteria (stops when
-            kl(post_{n+1}, post_{n}) <= kltol)
+            :math:`kl(post_{n+1}, post_{n}) <= kltol)`
         y_pres: argument for dichotomy solving when enforcing
-            kl(post_{n+1}, post_{n}) <= kl_max
+            :math:`kl(post_{n+1}, post_{n}) <= kl_{max}`
         x_pres: argument for dichotomy solving when enforcing
-            kl(post_{n+1}, post_{n}) <= kl_max
+            :math:`kl(post_{n+1}, post_{n}) <= kl_{max}`
         m_max: argument for dichotomy solving when enforcin
-             kl(post_{n+1}, post_{n}) <= kl_max
+             :math:`kl(post_{n+1}, post_{n}) <= kl_{max}`
         parallel: should 'fun' evaluations be parallelized? Default is True
         vectorized: is 'fun' vectorized? If True, 'parallel' is disregarded
         print_rec: How many gradient steps should there be prints
@@ -282,12 +282,12 @@ class SurPACSolver(BayesSolver):
                 new posterior (in the sense that
                 kl(post_{n+1}, post_{n}) <= kl_max). Default is 10.0
             dampen: float (0<= < 1). Contol maximum update speed of posterior. From
-                score approximation $\theta$, the posterior distribution should be
-                $\theta_0-temperature^{-1} \theta$. Using dampen >0, the update is
+                score approximation :math:`\theta`, the posterior distribution should be
+                :math:`\theta_0-temperature^{-1} \theta`. Using dampen >0, the update is
                     changed to
-                    $\theta_{n+1}
-                    =\theta_n
-                    + (1-dampen) (\theta_0-temperature^{-1} \theta - \theta_n)$
+                    ..math:
+                        \theta_{n+1}=\theta_n
+                        + (1-dampen) (\theta_0-temperature^{-1} \theta - \theta_n)
                 The fixed point solution of the problem remains unchanged, but
                 prevents relying to much on local approximations of the score.
             chain_length: number of posterior updates.
@@ -296,13 +296,13 @@ class SurPACSolver(BayesSolver):
             per_step: number of draws from the prior evaluated through 'fun' at
                 update step
             kltol: termination criteria (stops when
-                kl(post_{n+1}, post_{n}) <= kltol)
+                :math:`kl(post_{n+1}, post_{n}) <= kltol)`
             y_pres: argument for dichotomy solving when enforcing
-                kl(post_{n+1}, post_{n}) <= kl_max
+                :math:`kl(post_{n+1}, post_{n}) <= kl_{max}`
             x_pres: argument for dichotomy solving when enforcing
-                kl(post_{n+1}, post_{n}) <= kl_max
-            m_max: argument for dichotomy solving when enforcin
-                 kl(post_{n+1}, post_{n}) <= kl_max
+                :math:`kl(post_{n+1}, post_{n}) <= kl_{max}`
+            m_max: argument for dichotomy solving when enforcing
+                :math:`kl(post_{n+1}, post_{n}) <= kl_{max}`
             parallel: should 'fun' evaluations be parallelized? Default is True
             vectorized: is 'fun' vectorized? If True, 'parallel' is disregarded
             print_rec: How many gradient steps should there be prints

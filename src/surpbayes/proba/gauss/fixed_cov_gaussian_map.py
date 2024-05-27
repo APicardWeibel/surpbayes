@@ -13,7 +13,8 @@ from numpy.typing import ArrayLike
 from surpbayes.misc import _get_pre_shape, check_shape, prod
 from surpbayes.proba._errors import RenormError
 from surpbayes.proba._helper import _shape_info
-from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
+from surpbayes.proba.exponential_family.pre_exponential_family import \
+    PreExpFamily
 from surpbayes.proba.gauss.Gauss import Gaussian, inverse_cov
 from surpbayes.types import ProbaParam, Samples
 
@@ -26,7 +27,8 @@ def exp_family_gauss_fixed_cov(
     r"""Prepare functions to interpret fixed cov gaussian distributions as exponential family
 
     The output T works for the following parametrisation of a gaussian distribution:
-        $(Cov @ mean, (Cov_{i,i})_i, (Cov_{i,j})_{i>j})$.
+    ..maty::
+        (Cov @ mean, (Cov_{i,i})_i, (Cov_{i,j})_{i>j}).
 
     -.5 * (mean - x) Cov (mean - x)
     Cov @ mean, x
@@ -71,8 +73,8 @@ def exp_family_gauss_fixed_cov(
 
 class FixedCovGaussianMap(PreExpFamily):
     r"""
-    Class for Gaussian probability distributions of form $\mathcal{N}(\mu, \Sigma)$ with $\Sigma$
-    fixed.
+    Class for Gaussian probability distributions of form
+    :math:`\mathcal{N}(\mu, \Sigma)` with :math:`\Sigma` fixed.
     """
 
     # Indicate that this map deals with Gaussian
@@ -237,9 +239,7 @@ def exp_family_gauss_fact_cov(
     r"""Prepare functions to interpret fact cov gaussian distributions as exponential family
 
     The output T works for the following parametrisation of a gaussian distribution:
-        $(inv_Cov @ mean, \sigma^-2)$.
-
-        -.5 * inv_Cov (x x^T), \sigma^-2
+        :math:`(inv_Cov @ mean, \sigma^-2)`.
     """
 
     sample_size, sample_shape = _shape_info(sample_size, sample_shape)
@@ -296,11 +296,11 @@ def exp_family_gauss_fact_cov(
 class FactCovGaussianMap(PreExpFamily):
     r"""
     Parametrization of gaussian distributions of form
-            $(\mu, \sigma) -> N(\mu, \sigma^2 * Cov)$
+        :math:`(\mu, \sigma) \mapsto N(\mu, \sigma^2 * Cov)`
     where Cov is fixed.
 
-    The parameter is a 1D array of size d+1. The first d elements contain $\mu$, the last element
-    specifies $\sigma$
+    The parameter is a 1D array of size d+1. The first d elements contain :math:`\mu`,
+    the last element specifies :math:`\sigma`
     """
 
     # Indicate that this map deals with Gaussian

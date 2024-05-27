@@ -79,7 +79,8 @@ import warnings
 from typing import Callable, Optional, Sequence, Union, overload
 
 import numpy as np
-from surpbayes.misc import ShapeError, _get_pre_shape, par_eval, prod, vectorize
+from surpbayes.misc import (ShapeError, _get_pre_shape, par_eval, prod,
+                            vectorize)
 from surpbayes.proba.warnings import NegativeKLWarning, ShapeWarning
 from surpbayes.types import SamplePoint, Samples
 
@@ -260,7 +261,7 @@ class Proba:
         Estimate the f divergence a.f_div(b,f) = D_f(a,b) using n samples.
 
         Remark:
-            Function f must be convex and such that $f(1) = 0$ (No checks are performed).
+            Function f must be convex and such that f(1) = 0 (no checks are performed).
             f is assumed to be vectorized (applies function component wise).
             It is possible that the KL computation gives a negative result. A NegativeKLWarning
         warning is raised whenever that happens.
@@ -268,9 +269,9 @@ class Proba:
         depends on a reference distribution. The KL method assumes that, and only works if, the
         reference distribution is the same for the two distributions.
         """
-        samples = proba_2._gen(n_sample)
+        samples = proba_2.gen(n_sample)
 
-        log_ratios = self._log_dens(samples) - proba_2._log_dens(samples)
+        log_ratios = self._log_dens(samples) - proba_2.log_dens(samples)
 
         evals = f(np.exp(log_ratios))
 
@@ -319,7 +320,7 @@ class Proba:
         **kwargs,
     ) -> Union[float, np.ndarray]:
         r"""
-        Estimate the expected value $E[fun(x)]$ using i.i.d. samples.
+        Estimate the expected value :math:`\mathbb{E}[fun(x)]` using i.i.d. samples.
 
         Args:
             fun: a function of a sample outputing array like results. The function can take other
@@ -611,8 +612,8 @@ class Proba:
 
 def tensorize(*probas: Proba, flatten=True, dim: int = 0) -> Proba:
     r"""
-    From a collection of distribution $mu_i$, outputs distribution $(mu_1, mu_2, \dots)$ (with
-    independant components)
+    From a collection of distribution :mathbb:`mu_i`, outputs distribution :math:`(mu_1, mu_2, \dots)`
+    (with independent components)
 
     Shape issues:
         By default, the distributions are flattened, i.e. the routine considers their outputs as
@@ -743,8 +744,8 @@ def mixture(*args: Proba, weights: Optional[Sequence[float]] = None) -> Proba:
     r"""
     From a tuple of Proba objects and optional weights, returns the mixture
     probability whose density satisfies
-
-    $\frac{d\mu}{d\pi} = \frac{\sum_i \omega_i \frac{d\mu_i}{d\pi}}{\sum_i \omega_i}$
+    ..math::
+        \frac{d\mu}{d\pi} = \frac{\sum_i \omega_i \frac{d\mu_i}{d\pi}}{\sum_i \omega_i}
 
     <!> USER WARNING <!>
     The densities of all Proba objects should be computed with respect to the same
@@ -803,12 +804,12 @@ def from_sample(
     sample: Sequence[SamplePoint], kernel: Proba, weights: Optional[list] = None
 ) -> Proba:
     r"""
-    From a (weighted) - sample ($X_i$, $w_i$) and a kernel (distribution of
-        random variable $\epsilon$), returns the distribution of
+    From a (weighted) - sample (:math:`X_i`, :math:`\omega_i`) and a kernel (distribution
+    of random variable :math:`\epsilon`), returns the distribution of
+    ..math::
+        \epsilon + \sum \omega_i \delta_{X_i}
 
-        $\epsilon + \sum w_i \delta_{X_i}$
-
-    where $\delta_X$ is the dirac distribution on X.
+    where :math:`\delta_X` is the dirac distribution on X.
     """
     probas = tuple(kernel.shift(x) for x in sample)
     return mixture(*probas, weights=weights)
@@ -818,8 +819,8 @@ def add(prob1: Proba, prob2: Proba, n_sample=1000, parallel=False) -> Proba:
     r"""
     Independant addition of random variables.
 
-    If $X1\sim prob1$, $X2 \sim prob2$, and $X1, X2$ are independant, then
-        $X1 + X2 \sim add(prob1, prob2)$
+    If :math:`X_1\sim prob1`, :math:`X_2 \sim prob2`, and :math:`X_1, X_2` are independent,
+    then :math:`X_1 + X_2 \sim add(prob1, prob2)`
 
     This requires an approximation when computing the log_density function of the resulting
     distribution, since the formula involves an integral. It is moreover only usable only for

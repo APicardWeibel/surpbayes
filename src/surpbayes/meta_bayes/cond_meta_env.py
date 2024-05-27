@@ -45,25 +45,26 @@ class CondMetaEnv(MetaLearningEnv):
     improve stability, the prior distribution is forced to evolve slowly (in term of KL divergence)
 
     Gradient of the meta score for Catoni Pac-Bayes.
-    For a proba map $\pi$, noting $\theta_0$ the prior parameter, $R_i$, $\lambda_i$ the score
-    function and temperature for task $i$, $\hat{\theta}_i = \hat{\theta}_i(\theta_0)$ the
-    posterior parameter using prior $\theta_0$, the meta score of prior parameter $\theta_0$ is
-    defined as $ S(\theta_0) = \sum_i S_i(\theta_0) $ where
+    For a proba map :math:`\pi`, noting :math:`\theta_0` the prior parameter, :math:`R_i`,
+    :math:`\lambda_i` the empirical risk function and temperature for task i,
+    :math:`\hat{\theta}_i = \hat{\theta}_i(\theta_0)` the posterior parameter using prior
+    :math:`\theta_0`, the meta score of prior parameter :math:`\theta_0` is
+    defined as :math:`S(\theta_0) = \sum_i S_i(\theta_0)` where
     ..math::
         S_i(\theta_0)
         = \pi(\hat{\theta}_i)[R_i] + \lambda_i KL(\pi(\hat{\theta}_i), \pi(\theta_0))
 
     In the context of conditional meta learning, the prior is constructed from a meta parameter,
-    which is learnt, and taks meta data $m_i$. As such, the meta score of meta param $\alpha$ is
-    defined as:
+    which is learnt, and taks meta data :math:`m_i`. As such, the meta score of meta param
+    :math:`\alpha` is defined as:
     ..math::
         S(\alpha) = \sum_i S_i(T(\alpha, m_i))
 
-    where $T$ is the map from meta data to prior parameter. Noting $\theta_i = T(\alpha, m_i)$,
-    the derivative of $S_i(\theta_i)$ with respect to $\theta_i$ has simple expression
-    $\lambda_i K_i$ where $K_i$ is the gradient of the Kullback--Leibler term
-    $KL(\pi(\hat{\theta}_i), \pi(\theta_i))$ with respect to $\theta_i$ at fixed $\hat{\theta}_i$
-    value. Therefore, the gradient of $S_i(T(\alpha, m_i))$ with respect to $\alpha$ can be
+    where T is the map from meta data to prior parameter. Noting :math:`\theta_i = T(\alpha, m_i)`,
+    the derivative of :math:`S_i(\theta_i)` with respect to :math:`\theta_i` has simple expression
+    :math:`\lambda_i K_i` where :math:`K_i` is the gradient of the Kullback--Leibler term
+    :math:`KL(\pi(\hat{\theta}_i), \pi(\theta_i))` with respect to :math:`\theta_i` at fixed :math:`\hat{\theta}_i`
+    value. Therefore, the gradient of :math:`S_i(T(\alpha, m_i))` with respect to :math:`\alpha` can be
     computed using the chain rule.
     """
 

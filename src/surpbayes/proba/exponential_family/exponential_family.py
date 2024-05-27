@@ -10,7 +10,7 @@ The Kullback--Leibler divergence has a closed form expression which amounts to a
 ..math::
     KL(f_a, f_b) = g(b) - g(a) - (b - a) . nabla g(a).
 
-This allows for easy differentiation, provided the Hessian of $g$ is known.
+This allows for easy differentiation, provided the Hessian of g is known.
 
 Reference:
     https://www.lix.polytechnique.fr/~nielsen/EntropyEF-ICIP2010.pdf
@@ -91,8 +91,8 @@ class ExponentialFamily(ProbaMap):
     ):
         r"""
         Proba map for an exponential family defined through its natural parameters
-
-            $f_{\theta}(x) = \exp(\theta. T(x) - g(\theta) + h(x))$
+        ..math::
+            f_{\theta}(x) = \exp(\theta. T(x) - g(\theta) + h(x))
 
         where f is the density.
 
@@ -315,8 +315,8 @@ class ExponentialFamily(ProbaMap):
         der_transform: Optional[Callable[[Samples], np.ndarray]] = None,
     ):
         r"""
-        Transform the Class of probability $X_\theta \sim \mathbb{P}_{\theta}$ to the class of probability
-            $transform(X_\theta)$
+        Transform the Class of probability :math:`X_\theta \sim \mathbb{P}_{\theta}` to the
+        class of probability :math:`transform(X_\theta)`
 
         Important:
             transform MUST be bijective, else computations for log_dens_der, kl, grad_kl, grad_right_kl will fail.

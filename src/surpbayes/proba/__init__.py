@@ -86,8 +86,9 @@ A ProbaMap object is initialized from 5 arguments (3 optionals):
 takes as input Samples and returns the derivative of log densities of the distribution mapped by
 the ProbaParam, the derivative being with respect to the ProbaParam. Mathematically, it is the
 derivative of the function
-        $theta, x \rightarrow prob_map(theta).log_dens(x)$
-with respect to $\theta$.
+..math:
+    theta, x \rightarrow prob_map(theta).log_dens(x)
+with respect to :math:`\theta`.
 - ref_param: reference ProbaParam. Optional.
 - proba_param_shape: shape of ProbaParam objects accepted by prob_map. Optional.
 - sample_shape: shared sample shape of the probability distributions outputed by
@@ -128,7 +129,7 @@ parametrisation.
 II. A. d. Method inheritance
 A key feature of the ProbaMap class is method inheritance. For probability distributions X, Y,
 quantities such as f divergence (and in particular Kullback-Leibler divergence) are left invariant
-by the transform $X,Y \rightarrow g(X), g(Y)$ if $g$ is inversible. As such, reimplemented methods
+by the transform :math:`X,Y \rightarrow g(X), g(Y)` if g is inversible. As such, reimplemented methods
 such as kl, grad_kl, grad_right_kl are inhereted from the initial implementation after transform,
 that is to say. To do that, the methods are hidden behind attributes (ugly but effective). This is
 automatically done for transform. Methods can also be inherited when using subset and reparametrize.
@@ -195,16 +196,8 @@ For future considerations:
 from ..types import ProbaParam, SamplePoint
 from ._errors import RenormError
 from .exponential_family import ExponentialFamily, PreExpFamily
-from .gauss import (
-    BlockDiagGauss,
-    BlockDiagGaussMap,
-    FactCovGaussianMap,
-    FixedCovGaussianMap,
-    GaussHypercubeMap,
-    Gaussian,
-    GaussianMap,
-    TensorizedGaussian,
-    TensorizedGaussianMap,
-)
+from .gauss import (BlockDiagGauss, BlockDiagGaussMap, FactCovGaussianMap,
+                    FixedCovGaussianMap, GaussHypercubeMap, Gaussian,
+                    GaussianMap, TensorizedGaussian, TensorizedGaussianMap)
 from .proba import Proba, add, from_sample, mixture, tensorize
 from .proba_map import ProbaMap, map_tensorize

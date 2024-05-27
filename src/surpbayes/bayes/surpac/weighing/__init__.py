@@ -4,14 +4,14 @@ Weighting step for score_approximation Bayesian inference framework.
 Sub module for weighing a sample of points in order to approximate a distribution.
 
 Methods in the Bayesian calibration module rely on estimation of integrals with respect to
-variable distributions $\pi(\theta)$.
+variable distributions :math:`\pi(\theta)`.
 
-These integrals typically involve a function $f$ which is costly to evaluate. Previous evaluations
-of $f$ at a fixed sample $(x_i)$ is available.
+These integrals typically involve a function f which is costly to evaluate. Previous evaluations
+of f at a fixed sample :math:`(x_i)` is available.
 
-The goal of the present module is to compute weights $(\omega_i)$, such that
+The goal of the present module is to compute weights :math:`(\omega_i)`, such that
 ..math::
-    \sum g(x_i)\omega_i \simeq  \pi(\theta)[g] 
+    \sum g(x_i)\omega_i \simeq  \pi(\theta)[g]
 for all function g.
 """
 

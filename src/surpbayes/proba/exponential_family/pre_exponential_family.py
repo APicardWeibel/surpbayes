@@ -6,11 +6,11 @@ two more (functional) attributes:
 - T
 - T_to_param
 
-It is assumed that the probability distributions have log_density of form T(x) . F(param) .
-T_to_param is the function F^{-1}.
+It is assumed that the probability distributions have log_density of form :math:`T(x) \cdot F(param)`.
+T_to_param is the function :math:`F^{-1}`, and param_to_T the function F.
 
-In the case where the probability map (and hence F) is not injective, $T_to_param$ should map to
-any parameter outputing the distribution.
+In the case where the probability map is not injective, T_to_param should map to any parameter outputing
+the distribution.
 
 Used while no better solution is found.
 """
@@ -38,10 +38,10 @@ class PreExpFamily(ProbaMap):
     - der_der_g: the Hessian of the normalisation function (input in natural parametrisation)
 
     It is assumed that the probability distributions have log_density of form T(x) . F(param) .
-    T_to_param is the function F^{-1}.
+    T_to_param is the function :math:`F^{-1}`.
 
-    In the case where the probability map (and hence F) is not injective, $T_to_param$ should map to
-    any parameter outputing the distribution.
+    In the case where the probability map is not injective, T_to_param should map to any parameter
+    outputing the distribution.
     """
     # Indicate that this is a ExponentialFamily object
     map_type = "PreExpFamily"
@@ -158,8 +158,8 @@ class PreExpFamily(ProbaMap):
         new_sample_shape: Optional[tuple[int, ...]] = None,
     ):
         r"""
-        Transform the Class of probability $X_\theta \sim \mathbb{P}_{\theta}$ to the class of
-        probability $transform(X_\theta)$ for bijective "transform" map.
+        Transform the Class of probability :math:`X_\theta \sim \mathbb{P}_{\theta}` to the class of
+        probability :math:`transform(X_\theta)` for bijective "transform" map.
 
         Important:
             transform MUST be bijective, else computations for log_dens_der, kl, grad_kl,
@@ -308,8 +308,8 @@ class TransformedPreExpFamily(PreExpFamily):
         new_sample_shape: Optional[tuple[int, ...]] = None,
     ):
         r"""
-        Transform the Class of probability $X_\theta \sim \mathbb{P}_{\theta}$ to the class of probability
-            $transform(X_\theta)$ for bijective "transform".
+        Transform the Class of probability :math:`X_\theta \sim \mathbb{P}_{\theta}` to the class of probability
+            :math:`transform(X_\theta)` for bijective "transform".
 
         Important:
             transform MUST be bijective, else computations for log_dens_der, kl, grad_kl, grad_right_kl will fail.
@@ -470,12 +470,13 @@ class TransformedPreExpFamily(PreExpFamily):
 
         Args:
             param_1, param_0 are 2 prior parameters
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
             n_sample, number of points used to estimate the f-divergence
 
         Output:
-            $D_f(proba_1, proba_0)$ approximated as $\sum_i(f(proba_1(\phi_i)/proba_0(\phi_i))$
-            with $\phi_i$ sampled through proba_0.gen (typically i.i.d.)
+            :math:`D_f(proba_1, proba_0)` approximated as
+            :math:`\sum_i(f(\frac{ d proba_1(\phi_i)}{d proba_0(\phi_i)})`
+            with :math:`\phi_i` sampled through proba_0.gen (typically i.i.d.)
 
         Note:
             For a ProbaMap object obtained as the result of .reparametrize method with
@@ -495,7 +496,7 @@ class TransformedPreExpFamily(PreExpFamily):
 
         Args:
             param_0, the parameter describing the second distribution.
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
                 Should be vectorized
             f_der, the derivative of f. Should be vectorized
         """
@@ -512,7 +513,7 @@ class TransformedPreExpFamily(PreExpFamily):
 
         Args:
             param_1, the parameter describing the first distribution.
-            f, a convex function such that $f(1) = 0$ (No checks are performed).
+            f, a convex function such that f(1) = 0 (No checks are performed).
             f_der, the derivative of f
         """
         return self._grad_right_f_div(param_1, f, f_der)
