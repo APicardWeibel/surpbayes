@@ -114,7 +114,7 @@ class CondMetaEnv(MetaLearningEnv):
         if hyperparams:
             loc_hyperparams = self.hyperparams.copy()
             loc_hyperparams.update(hyperparams)
-        else: 
+        else:
             loc_hyperparams = self.hyperparams
 
         # Infer the prior_param from the conditional mapping with meta_param
@@ -162,12 +162,19 @@ class CondMetaEnv(MetaLearningEnv):
                 tuple(range(self._prob_ndim)),
             ),
         )
-    
-    def _get_eta_use(self, grad:np.ndarray, kl_max:float, eta_loc:float):
+
+    def _get_eta_use(self, grad: np.ndarray, kl_max: float, eta_loc: float):
         """De-activated for now - returns eta_loc"""
         return eta_loc
 
-    def meta_learn(self, epochs:int=1, eta:float=0.01, kl_max:float=1.0, mini_batch_size:int=10, silent:bool=False) -> None:
+    def meta_learn(
+        self,
+        epochs: int = 1,
+        eta: float = 0.01,
+        kl_max: float = 1.0,
+        mini_batch_size: int = 10,
+        silent: bool = False,
+    ) -> None:
         """Meta Learning algorithm
 
         Args:
@@ -187,7 +194,9 @@ class CondMetaEnv(MetaLearningEnv):
         self.hist_meta.extend_memory(epochs)
 
         # Extend memory for tasks (once and for all rather than iteratively)
-        [self._extend_memo(task, epochs) for task in self.list_task]  # pylint: disable=W0106
+        [
+            self._extend_memo(task, epochs) for task in self.list_task
+        ]  # pylint: disable=W0106
 
         # Define step size
         eta_loc = eta / self.n_task
@@ -207,7 +216,9 @@ class CondMetaEnv(MetaLearningEnv):
                 iloc_task_s = permut[start : (start + mini_batch_size)]
                 for j, iloc_task in enumerate(iloc_task_s):
                     task = self.list_task[iloc_task]
-                    blab(silent, f"Starting task {iloc_task} ({start+j+1}/{self.n_task})")
+                    blab(
+                        silent, f"Starting task {iloc_task} ({start+j+1}/{self.n_task})"
+                    )
                     grad = grad - self.grad_meta(task)
                     self.task_score[iloc_task] = task.end_score
 

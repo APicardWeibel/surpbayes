@@ -933,4 +933,4 @@ def load_dig_param(path: str) -> ADM1Param:
     Loads a digester parameter from a JSON file.
     """
     param_pd = pd.read_json(path, orient="index", typ="Series")
-    return ADM1Param(param_pd.to_dict()) #pylint: disable=E1101
+    return ADM1Param(param_pd.to_dict())  # pylint: disable=E1101

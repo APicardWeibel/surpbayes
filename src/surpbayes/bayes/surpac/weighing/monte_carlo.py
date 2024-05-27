@@ -73,20 +73,20 @@ def get_weights_mc(
 
     if half_metric_matrix is not None:
         index = faiss.IndexFlatL2(d)
-        index.add(
+        index.add(  # pylint: disable=E1120
             (samples @ half_metric_matrix).astype(np.float32)
-        )  # pylint: disable=no-value-for-parameter
-        min_ids = index.search(
+        )
+        min_ids = index.search(  #  pylint: disable=E1120
             (large_sample @ half_metric_matrix).astype(np.float32), k=k_neighbors
-        )[
-            1
-        ]  # pylint: disable=no-value-for-parameter
+        )[1]
     else:
         index = faiss.IndexFlatL2(d)
-        index.add(samples.astype(np.float32))  # pylint: disable=no-value-for-parameter
-        min_ids = index.search(large_sample.astype(np.float32), k=k_neighbors)[
+        index.add(samples.astype(np.float32))  # pylint: disable=E1120
+        min_ids = index.search(
+            large_sample.astype(np.float32), k=k_neighbors
+        )[  # pylint: disable=E1120
             1
-        ]  # pylint: disable=no-value-for-parameter
+        ]
 
     idx, counts = np.unique(min_ids, return_counts=True)
 
@@ -155,16 +155,18 @@ def get_weights_mc_approx(
 
     if half_metric_matrix is not None:
         samples_fmt = (samples @ half_metric_matrix).astype(np.float32)
-        index.train(samples_fmt)
-        index.add(samples_fmt)
-        min_ids = index.search(
+        index.train(samples_fmt)  # pylint: disable=E1120
+        index.add(samples_fmt)  # pylint: disable=E1120
+        min_ids = index.search(  # pylint: disable=E1120
             (large_sample @ half_metric_matrix).astype(np.float32), k=k_neighbors
         )[1]
     else:
         samples_fmt = samples.astype(np.float32)
-        index.train(samples_fmt)
-        index.add(samples_fmt)
-        min_ids = index.search(large_sample.astype(np.float32), k=k_neighbors)[1]
+        index.train(samples_fmt)  # pylint: disable=E1120
+        index.add(samples_fmt)  # pylint: disable=E1120
+        min_ids = index.search(  # pylint: disable=E1120
+            large_sample.astype(np.float32), k=k_neighbors
+        )[1]
 
     idx, counts = np.unique(min_ids, return_counts=True)
 
@@ -172,7 +174,7 @@ def get_weights_mc_approx(
     # Error handling for this case
     if np.any((idx < 0) | (idx >= len(samples))):
 
-        raise Exception(f"Faiss wrong idx Error")
+        raise Exception("Faiss wrong idx Error")
 
     weights = np.zeros(len(samples))
     weights[idx] = counts / (n_sample_estim * k_neighbors)

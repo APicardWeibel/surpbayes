@@ -13,12 +13,14 @@ def check_coherence(
         assert cov.shape == (d, d)
         assert len(block) == d
 
+
 def inv_permut(permut):
     """Fast invert a permutation
     (code from https://stackoverflow.com/questions/9185768/inverting-permutations-in-python)"""
     inv = np.empty_like(permut)
     inv[permut] = np.arange(len(inv), dtype=inv.dtype)
     return inv
+
 
 class BlockDiagGauss(Gaussian):
     def __init__(

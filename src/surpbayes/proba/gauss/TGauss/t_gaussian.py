@@ -65,6 +65,23 @@ class TensorizedGaussian(Proba):
             log_dens=log_dens, gen=gen, sample_shape=self._sample_shape, np_out=True
         )
 
+    def _updt_sample_shape(self, sample_shape: Optional[tuple[int, ...]]):
+        """Update sample shape safely.
+        If passed sample_shape is None, pass"""
+        if sample_shape is None:
+            return None
+
+        if prod(sample_shape) != self._sample_size:
+            warnings.warn(
+                f"""Size of means ({self._sample_size} and sample_shape ({sample_shape}) are not compatible.
+                'sample_shape' is not updated.
+                """
+            )
+            return None
+        self._sample_shape = sample_shape
+        self._shaped_means = self._means.reshape(self._sample_shape)
+        self._n_dim_shape = len(self._sample_shape)
+
     @property
     def means(self):
         """Flat means of the distribution"""
@@ -83,16 +100,21 @@ class TensorizedGaussian(Proba):
 
     @property
     def shaped_means(self):
-        return self.shaped_means
+        """Means of the probability distribution"""
+        return self._shaped_means
 
     @shaped_means.setter
     def shaped_means(self, value):
         nsmeans = np.array(value)
         new_shape = nsmeans.shape
         if prod(new_shape) != self._sample_size:
-            raise ValueError(
-                f"Proposed new means is not of adequate size (expected {self._sample_size}, got shape ({new_shape}))"
+            msg = " ".join(
+                [
+                    "Proposed new means is not of adequate size",
+                    f"(expected {self._sample_size}, got shape ({new_shape}))",
+                ]
             )
+            raise ValueError(msg)
         self._means = nsmeans.flatten()
         self._updt_sample_shape(new_shape)
 
@@ -116,23 +138,6 @@ class TensorizedGaussian(Proba):
     @sample_shape.setter
     def sample_shape(self, value):
         self._updt_sample_shape(sample_shape=value)
-
-    def _updt_sample_shape(self, sample_shape: Optional[tuple[int, ...]]):
-        """Update sample shape safely.
-        If passed sample_shape is None, pass"""
-        if sample_shape is None:
-            return None
-
-        if prod(sample_shape) != self._sample_size:
-            warnings.warn(
-                f"""Size of means ({self._sample_size} and sample_shape ({sample_shape}) are not compatible.
-                'sample_shape' is not updated.
-                """
-            )
-            return None
-        self._sample_shape = sample_shape
-        self._shaped_means = self._means.reshape(self._sample_shape)
-        self._n_dim_shape = len(self._sample_shape)
 
     def _updt_devs(self, devs: np.ndarray) -> None:
         """Update standard deviations and related fields"""

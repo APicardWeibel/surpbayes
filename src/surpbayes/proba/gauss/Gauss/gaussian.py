@@ -265,6 +265,17 @@ class Gaussian(Proba):
             sample_shape=new_shape,
         )
 
+    def shift(self, shift: SamplePoint):
+        """
+        Transform the distribution of X to the distribution of X + shift
+        """
+        return Gaussian(
+            means=self.shaped_means + shift,
+            cov=self.cov,
+            info={"vals": self._vals, "vects": self._vects},
+            sample_shape=self._sample_shape,
+        )
+
     # flatten uses the .reshape method from the instance, no need to reimplement
     def contract(self, alpha: float):
         """
@@ -277,17 +288,6 @@ class Gaussian(Proba):
             means=alpha * self._means,
             cov=(alpha**2) * self._cov,  # type: ignore
             info={"vals": (alpha**2) * self._vals, "vects": self._vects},
-            sample_shape=self._sample_shape,
-        )
-
-    def shift(self, shift: SamplePoint):
-        """
-        Transform the distribution of X to the distribution of X + shift
-        """
-        return Gaussian(
-            means=self.shaped_means + shift,
-            cov=self.cov,
-            info={"vals": self._vals, "vects": self._vects},
             sample_shape=self._sample_shape,
         )
 

@@ -7,14 +7,14 @@ Useful to check that:
 """
 
 import numpy as np
-from surpbayes.proba.exponential_family.pre_exponential_family import \
-    PreExpFamily
+from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
 from surpbayes.proba.proba_map import ProbaMap
 from surpbayes.types import ProbaParam
 
 
 class ImplementationError(Exception):
     """Raise an error when something seems to be badly implemented"""
+
 
 def check_grad_kl(
     pmap: ProbaMap,

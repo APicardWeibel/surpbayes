@@ -13,8 +13,7 @@ from numpy.typing import ArrayLike
 from surpbayes.misc import _get_pre_shape, check_shape, prod
 from surpbayes.proba._errors import RenormError
 from surpbayes.proba._helper import _shape_info
-from surpbayes.proba.exponential_family.pre_exponential_family import \
-    PreExpFamily
+from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
 from surpbayes.proba.gauss.Gauss import Gaussian, inverse_cov
 from surpbayes.types import ProbaParam, Samples
 

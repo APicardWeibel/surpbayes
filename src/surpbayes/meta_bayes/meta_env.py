@@ -8,8 +8,12 @@ from typing import Optional
 import dill
 import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes import (AccuSampleValDens, AccuSampleValExp,
-                             infer_pb_routine, pacbayes_minimize)
+from surpbayes.bayes import (
+    AccuSampleValDens,
+    AccuSampleValExp,
+    infer_pb_routine,
+    pacbayes_minimize,
+)
 from surpbayes.meta_bayes.hist_meta import HistMeta
 from surpbayes.meta_bayes.task import Task
 from surpbayes.misc import blab, prod
@@ -279,7 +283,7 @@ class MetaLearningEnv:
         if hyperparams:
             loc_hyperparams = self.hyperparams.copy()
             loc_hyperparams.update(hyperparams)
-        else: 
+        else:
             loc_hyperparams = self.hyperparams
 
         # Perform the inner algorithm
@@ -447,7 +451,7 @@ class MetaLearningEnv:
         if n_fill < n_remain:
             task.accu_sample_val.extend_memory(n_fill - n_remain)  # type: ignore
 
-    def extend_tasks_memo(self, epochs:int):
+    def extend_tasks_memo(self, epochs: int):
         for task in self.list_task:
             self._extend_memo(task, epochs)
 
