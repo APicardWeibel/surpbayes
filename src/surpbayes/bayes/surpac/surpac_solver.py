@@ -1,3 +1,7 @@
+"""SurPACSolver class definition.
+
+SurPACSolver is the generic implementation for ExponentialFamily. 
+"""
 from typing import Callable, Optional, Union
 
 import numpy as np
@@ -5,9 +9,9 @@ from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.bayes.bayes_solver import BayesSolver
 from surpbayes.bayes.optim_result_bayes import OptimResultBayes
 # from surpbayes.bayes.score_approx._helper import set_up_per_step
-from surpbayes.bayes.score_approx.accu_sample_exp import (AccuSampleValExp,
-                                                     _add_T_data)
-from surpbayes.bayes.score_approx.weighing import get_weights_mc
+from surpbayes.bayes.surpac.accu_sample_exp import (AccuSampleValExp,
+                                                    _add_T_data)
+from surpbayes.bayes.surpac.weighing import get_weights_mc
 from surpbayes.misc import blab, prod
 from surpbayes.optim import dichoto
 from surpbayes.proba import ExponentialFamily, PreExpFamily, Proba, RenormError
@@ -132,13 +136,13 @@ def _solve_in_kl(
     )[0]
 
 
-class ScoreApproxBayesSolver(BayesSolver):
-    """
+class SurPACSolver(BayesSolver):
+    r"""
     Main class for Bayesian optimisation using the score approximation method
 
     ------------------------------- BACKGROUND -------------------------------
 
-    ScoreApproxBayesSolver strives to minimize Catoni's bound through an score
+    SurPACSolver strives to minimize Catoni's bound through an score
     approximation method on exponential families
 
     For a parametric family of distribution 'proba_map' (noted $\pi(\theta)$),

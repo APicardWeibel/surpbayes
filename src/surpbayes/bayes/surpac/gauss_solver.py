@@ -1,15 +1,13 @@
 import numpy as np
-
-from surpbayes.types import Samples
-from surpbayes.bayes.score_approx.pre_exp_solver import PreExpSABS
-from surpbayes.bayes.score_approx.weighing import get_weights_mc_gauss
-
+from surpbayes.bayes.surpac.pre_exp_solver import PreExpSPACS
+from surpbayes.bayes.surpac.weighing import get_weights_mc_gauss
 # from multiprocess import Pool  # pylint: disable=E0611
 from surpbayes.misc import blab
 from surpbayes.proba import Proba
+from surpbayes.types import Samples
 
 
-class GaussianSABS(PreExpSABS):
+class GaussianSPACS(PreExpSPACS):
     """Bayesian Solver using Score approximation routine for Gaussian Family Maps
 
     Differs from routine for standard PreExpFamily by the weighing technique (covariance matrix

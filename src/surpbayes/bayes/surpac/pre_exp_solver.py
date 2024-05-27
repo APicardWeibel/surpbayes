@@ -1,4 +1,4 @@
-"""Submodule for ScoreApproxBayesSolver subclass for PreExepFamily"""
+"""Submodule for SurPACSolver subclass for PreExepFamily"""
 
 from typing import Callable, Optional, Union
 
@@ -6,8 +6,8 @@ import numpy as np
 
 from surpbayes.types import ProbaParam, SamplePoint
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes.score_approx.score_approx_solver import (
-    ScoreApproxBayesSolver,
+from surpbayes.bayes.surpac.surpac_solver import (
+    SurPACSolver,
 )
 from surpbayes.misc import blab
 from surpbayes.optim import dichoto
@@ -67,7 +67,7 @@ def _solve_in_kl(
     )[0]
 
 
-class PreExpSABS(ScoreApproxBayesSolver):
+class PreExpSPACS(SurPACSolver):
     """Bayesian Optimisation using Score approximation routine for PreExpFamily Maps
 
     Methods for the computation of the update correction are adapted ('get_t_dir',

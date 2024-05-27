@@ -6,7 +6,7 @@ from scipy.spatial import cKDTree
 from scipy.stats import gaussian_kde
 
 from surpbayes.bayes.optim_result_bayes import OptimResultBayes
-from surpbayes.bayes.score_approx.weighing import get_weights_mc
+from surpbayes.bayes.surpac.weighing import get_weights_mc
 
 
 def plot_score_evol(

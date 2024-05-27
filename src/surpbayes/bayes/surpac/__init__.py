@@ -56,6 +56,6 @@ prior/posterior conjugation known.
 """
 
 from .accu_sample_exp import AccuSampleValExp
-from .gauss_solver import GaussianSABS
-from .pre_exp_solver import PreExpSABS
-from .score_approx_solver import ScoreApproxBayesSolver
+from .gauss_solver import GaussianSPACS
+from .pre_exp_solver import PreExpSPACS
+from .surpac_solver import SurPACSolver

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from surpbayes.bayes.optim_result_bayes import OptimResultBayes
-from surpbayes.bayes.score_approx.weighing import (
+from surpbayes.bayes.surpac.weighing import (
     get_weights_mc,
     get_weights_mc_gauss,
 )

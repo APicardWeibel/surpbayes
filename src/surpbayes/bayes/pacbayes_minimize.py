@@ -10,8 +10,8 @@ from surpbayes.bayes.bayes_solver import BayesSolver
 from surpbayes.bayes.gradient_based import (GradientBasedBayesSolver,
                                             KNNBayesSolver)
 from surpbayes.bayes.optim_result_bayes import OptimResultBayes
-from surpbayes.bayes.score_approx import (GaussianSABS, PreExpSABS,
-                                          ScoreApproxBayesSolver)
+from surpbayes.bayes.surpac import (GaussianSPACS, PreExpSPACS,
+                                          SurPACSolver)
 from surpbayes.proba import ProbaMap
 from surpbayes.types import ProbaParam
 
@@ -42,11 +42,11 @@ def infer_pb_routine(
     """
     if (pac_bayes_solver is None) or (pac_bayes_solver == "score_approx") or (pac_bayes_solver == "SurPAC-CE"):
         if proba_map.map_type == "Gaussian":
-            return GaussianSABS
+            return GaussianSPACS
         if proba_map.map_type == "PreExpFamily":
-            return PreExpSABS
+            return PreExpSPACS
         if proba_map.map_type == "ExponentialFamily":
-            return ScoreApproxBayesSolver
+            return SurPACSolver
         if pac_bayes_solver is None:
             return GradientBasedBayesSolver
 
@@ -59,21 +59,21 @@ def infer_pb_routine(
                 raise ValueError(
                     "'score_approx_gauss' can only be used for 'GaussianMap', 'BlockDiagGaussMap', 'FactCovGaussianMap', 'FixedCovGaussianMap' or 'TensorizedGaussianMap'"
                 )
-            return GaussianSABS
+            return GaussianSPACS
 
         elif pac_bayes_solver == "score_approx_pre_exp":
             if proba_map.map_type != "PreExpFamily":
                 raise ValueError(
                     "score_approx_pre_exp can only be used for PreExpFamily"
                 )
-            return PreExpSABS
+            return PreExpSPACS
 
         elif pac_bayes_solver == "score_approx_exp":
             if proba_map.map_type != "ExponentialFamily":
                 raise ValueError(
                     "score_approx_exp can only be used for ExponentialFamily"
                 )
-            return ScoreApproxBayesSolver
+            return SurPACSolver
 
         elif pac_bayes_solver == "corr_weights":
             return GradientBasedBayesSolver

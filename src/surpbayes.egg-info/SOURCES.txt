@@ -33,7 +33,7 @@ surpbayes/bayes/score_approx/__init__.py
 surpbayes/bayes/score_approx/accu_sample_exp.py
 surpbayes/bayes/score_approx/gauss_solver.py
 surpbayes/bayes/score_approx/pre_exp_solver.py
-surpbayes/bayes/score_approx/score_approx_solver.py
+surpbayes/bayes/score_approx/SurPACSolver.py
 surpbayes/bayes/score_approx/sampling/__init__.py
 surpbayes/bayes/score_approx/sampling/iid_random.py
 surpbayes/bayes/score_approx/sampling/partial_stein.py
