@@ -7,11 +7,14 @@ from surpbayes.misc import _get_pre_shape, prod
 from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
 from surpbayes.proba.gauss.BlockGauss.block_diag import BlockDiagGauss
 from surpbayes.proba.gauss.BlockGauss.helper import check_blocks
-from surpbayes.proba.gauss.BlockGauss.nb_helper import (_block_kl, _par_to_mu_M,
-                                                   _pre_der_g,
-                                                   _quadra_to_param,
-                                                   _T_to_quadra_loc,
-                                                   loc_param_to_T)
+from surpbayes.proba.gauss.BlockGauss.nb_helper import (
+    _block_kl,
+    _par_to_mu_M,
+    _pre_der_g,
+    _quadra_to_param,
+    _T_to_quadra_loc,
+    loc_param_to_T,
+)
 from surpbayes.proba.gauss.Gauss import GaussianMap, inverse_cov, make_cov
 from surpbayes.proba.gauss.Gauss.gaussian_map import _comp_log_dens_der
 from surpbayes.types import ProbaParam, Samples
@@ -168,7 +171,7 @@ class BlockDiagGaussMap(PreExpFamily):
     map_type = "Gaussian"
 
     def __init__(self, blocks: list[list[int]]):
-        
+
         check_blocks(blocks)
 
         self.ds = np.array([len(block) for block in blocks])

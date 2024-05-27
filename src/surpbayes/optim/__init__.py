@@ -23,8 +23,12 @@ An interface
 """
 
 from surpbayes.optim.dichoto import dichoto
-from surpbayes.optim.generative_optim import (CMAOptimizer, GenOptimizer,
-                                         MHOptimizer, OptimResultCMA)
+from surpbayes.optim.generative_optim import (
+    CMAOptimizer,
+    GenOptimizer,
+    MHOptimizer,
+    OptimResultCMA,
+)
 from surpbayes.optim.optim import optim
 from surpbayes.optim.optim_result import OptimResult
 from surpbayes.optim.optimizer import Optimizer

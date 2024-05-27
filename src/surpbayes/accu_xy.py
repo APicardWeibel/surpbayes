@@ -159,7 +159,7 @@ class AccuSampleVal:
         self._n_filled = np.sum(gen_tracker >= 0, dtype=int)
         self._gen_tracker = gen_tracker
 
-    def sample(self, k: Optional[int] = None)->Samples:
+    def sample(self, k: Optional[int] = None) -> Samples:
         """
         Clean look at the samples
 
@@ -173,7 +173,7 @@ class AccuSampleVal:
 
         return self._sample[init : self._n_filled]
 
-    def vals(self, k: Optional[int] = None)->np.ndarray:
+    def vals(self, k: Optional[int] = None) -> np.ndarray:
         """
         Clean look at the sample evaluations
 
@@ -317,6 +317,6 @@ class AccuSampleVal:
         """Downgrade a subclass of AccuSampleVal back to AccuSampleVal"""
         accu = AccuSampleVal(self.sample_shape, self._n_tot)
         accu.add(self.sample(), self.vals())
-        accu._gen_tracker = self._gen_tracker # pylint: disable=W0212
+        accu._gen_tracker = self._gen_tracker  # pylint: disable=W0212
 
         return accu

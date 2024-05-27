@@ -969,10 +969,10 @@ def run_adm1(
     influent_state: np.ndarray,
     initial_state: np.ndarray,
     # Digester info
-    V_liq:float,
-    V_gas:float,
-    T_ad :float,
-    T_op:float,
+    V_liq: float,
+    V_gas: float,
+    T_ad: float,
+    T_op: float,
     # Parameter values, unpacked
     N_xc: float,
     N_I: float,

@@ -8,8 +8,10 @@ from typing import Optional
 
 import numpy as np
 from surpbayes.pyadm1.basic_classes.cod_vs_conv import cod_vs_values
-from surpbayes.pyadm1.basic_classes.feed import (cod_vs_feed_cols,
-                                                 influent_state_col_dict)
+from surpbayes.pyadm1.basic_classes.feed import (
+    cod_vs_feed_cols,
+    influent_state_col_dict,
+)
 from surpbayes.pyadm1.basic_classes.obs import cod_vs_dig_states_cols
 
 q_col = influent_state_col_dict["Q"]

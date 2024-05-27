@@ -28,7 +28,7 @@ class Optimizer:
         self.vectorized = vectorized
 
         if self.parallel:
-            self.pool = Pool() # pylint: disable=E1102
+            self.pool = Pool()  # pylint: disable=E1102
         else:
             self.pool = None
 

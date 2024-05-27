@@ -79,8 +79,7 @@ import warnings
 from typing import Callable, Optional, Sequence, Union, overload
 
 import numpy as np
-from surpbayes.misc import (ShapeError, _get_pre_shape, par_eval, prod,
-                            vectorize)
+from surpbayes.misc import ShapeError, _get_pre_shape, par_eval, prod, vectorize
 from surpbayes.proba.warnings import NegativeKLWarning, ShapeWarning
 from surpbayes.types import SamplePoint, Samples
 

@@ -10,13 +10,16 @@ the IO submodule.
 """
 
 import numpy as np
+
 # from surpbayes.proba import (BlockDiagGaussMap, FixedCovGaussianMap, GaussianMap,
 #                         TensorizedGaussianMap)
 from surpbayes.proba import BlockDiagGaussMap
 from surpbayes.pyadm1.basic_classes.parameter import ADM1Param
-from surpbayes.pyadm1.proba._normalisation_param import (devs_dict,
-                                                         devs_interp,
-                                                         renorm_param)
+from surpbayes.pyadm1.proba._normalisation_param import (
+    devs_dict,
+    devs_interp,
+    renorm_param,
+)
 
 # ------- Group diagonal covariance - Indexes to train -------
 parameter_families = [
@@ -40,29 +43,34 @@ group_index = []
 _count = 0
 for index in parameter_families:
     k = len(index)
-    group_index.append(list(range(_count, _count+k)))
+    group_index.append(list(range(_count, _count + k)))
     _count += k
 # group_index = [[parameter_dict[name] for name in family] for family in parameter_families]
+
 
 def _make_block_prior_param(group):
     """Construct prior paramter on block"""
     n = len(group)
-    _prior_param = np.zeros((n+1, n))
+    _prior_param = np.zeros((n + 1, n))
     _prior_param[0] = np.log([renorm_param[name] for name in group])
-    _prior_param[1:] = np.diag(0.4 * np.log(np.array(
-        [devs_interp[devs_dict[name]] for name in group]) +1.0))
+    _prior_param[1:] = np.diag(
+        0.4 * np.log(np.array([devs_interp[devs_dict[name]] for name in group]) + 1.0)
+    )
     return _prior_param.flatten()
 
-prior_param = np.concatenate([_make_block_prior_param(group) for group in parameter_families])
+
+prior_param = np.concatenate(
+    [_make_block_prior_param(group) for group in parameter_families]
+)
 proba_map = BlockDiagGaussMap(group_index)
 
-def convert_param(param:np.ndarray)->ADM1Param:
+
+def convert_param(param: np.ndarray) -> ADM1Param:
     """Convert parameter from array to ADM1Param format"""
-    pre_dict =  dict(zip(param_names, np.exp(param)))
-    
+    pre_dict = dict(zip(param_names, np.exp(param)))
+
     for name in ["ac", "h2", "aa"]:
         delta = pre_dict.pop(f"pH_UL:LL_{name}")
         pre_dict[f"pH_UL_{name}"] = pre_dict[f"pH_LL_{name}"] + delta
 
     return ADM1Param(pre_dict)
-

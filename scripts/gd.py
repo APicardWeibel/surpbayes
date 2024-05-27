@@ -5,8 +5,12 @@ import sys
 import warnings
 
 import numpy as np
-from surpbayes.pyadm1.basic_classes import (load_dig_feed, load_dig_info,
-                                            load_dig_state, load_dig_states)
+from surpbayes.pyadm1.basic_classes import (
+    load_dig_feed,
+    load_dig_info,
+    load_dig_state,
+    load_dig_states,
+)
 from surpbayes.pyadm1.digester import Digester
 from surpbayes.pyadm1.proba import Interface, prior_param, proba_map
 from surpbayes.types import ProbaParam
@@ -21,7 +25,9 @@ data_path = os.path.join(loc_path, "..", "data", "ADM1_data_LF")
 save_path = os.path.join(loc_path, "..", "exp_results", "optim", "GD")
 os.makedirs(save_path, exist_ok=True)
 
-feed = load_dig_feed(os.path.join(data_path,"train_data/feed.csv"))# [:100] # limit to first 25 days to speed up
+feed = load_dig_feed(
+    os.path.join(data_path, "train_data/feed.csv")
+)  # [:100] # limit to first 25 days to speed up
 ini_state = load_dig_state(os.path.join(data_path, "train_data/init_state.json"))
 obs = load_dig_states(os.path.join(data_path, "train_data/obs.csv"))
 dig_info = load_dig_info(os.path.join(data_path, "dig_info.json"))
@@ -33,13 +39,12 @@ interface = Interface(dig, temperature=temperature, prior_param=prior_param)
 # For correct evaluation
 n_eval = 160
 
-def main(per_step:int, eta:float, budget:int=9600):
+
+def main(per_step: int, eta: float, budget: int = 9600):
 
     par_str = f"{str(eta).replace('.', '_')}_{per_step}"
 
-    def eval_results(
-        post_params:list[ProbaParam]
-    ):
+    def eval_results(post_params: list[ProbaParam]):
         perfs = np.zeros(len(post_params))
 
         for i, post_param in enumerate(post_params):
@@ -47,7 +52,9 @@ def main(per_step:int, eta:float, budget:int=9600):
             samples = proba_map(post_param)(n_eval)
             mean_score = np.mean(interface.mult_score(samples))
 
-            perfs[i] = mean_score + interface.temperature * proba_map.kl(post_param, prior_param)
+            perfs[i] = mean_score + interface.temperature * proba_map.kl(
+                post_param, prior_param
+            )
         return perfs
 
     chain_length = budget // per_step
@@ -72,12 +79,11 @@ def main(per_step:int, eta:float, budget:int=9600):
             params = list(opt_res.hist_param)
             params.append(opt_res.opti_param)
 
-            # Re evaluate 
+            # Re evaluate
             end_param = opt_res.opti_param
-            opti_score = (
-                np.mean(interface.mult_score(proba_map(end_param)(per_step)))
-                + interface.temperature * proba_map.kl(end_param, prior_param)
-            )
+            opti_score = np.mean(
+                interface.mult_score(proba_map(end_param)(per_step))
+            ) + interface.temperature * proba_map.kl(end_param, prior_param)
 
             print("Not reevaluating, since each estimate is unbiased + independant")
             # Note that when per_step=80, the estimations of the performance are
@@ -97,6 +103,7 @@ def main(per_step:int, eta:float, budget:int=9600):
     # Do computation
     perfs = np.array(results)
     np.savetxt(os.path.join(save_path, f"perfs_{par_str}.csv"), perfs)
+
 
 if __name__ == "__main__":
 
@@ -120,9 +127,13 @@ if __name__ == "__main__":
                 main(per_step, eta, 1600)
         sys.exit()
     elif args.mode != "eval":
-        warnings.warn("Run mode not correct (should be either 'prelim' or 'eval'). Trying 'eval' run")
+        warnings.warn(
+            "Run mode not correct (should be either 'prelim' or 'eval'). Trying 'eval' run"
+        )
 
     if (args.eta < 0) or (args.per_step < 0):
-        raise ValueError("Values for eta and per_step must be specified and positive.",
-        "Consider running 'python PATH/TO/FOLD/gd.py -eta <eta> -ps <per_step>'")
+        raise ValueError(
+            "Values for eta and per_step must be specified and positive.",
+            "Consider running 'python PATH/TO/FOLD/gd.py -eta <eta> -ps <per_step>'",
+        )
     main(args.per_step, args.eta, budget=9600)

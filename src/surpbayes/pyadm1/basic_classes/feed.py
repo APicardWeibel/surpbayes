@@ -33,7 +33,7 @@ influent_state_cols = [
     "Q",  # M3 Day-1
 ]
 
-influent_state_col_dict = {name:i for i, name in enumerate(influent_state_cols)}
+influent_state_col_dict = {name: i for i, name in enumerate(influent_state_cols)}
 
 influent_state_units = {
     "time": "Day",
@@ -73,6 +73,7 @@ if len(__delta) > 0:
 
 cod_vs_feed_cols = [influent_state_col_dict[x] for x in COD_VS.keys()]
 
+
 class Feed:
     def __init__(self, df: pd.DataFrame):
         self.df = df.copy()
@@ -98,7 +99,7 @@ class Feed:
         time = value["time"].to_numpy()
         if (len(time) > 1) and np.any(time[1:] - time[:-1] <= 0):
             raise ValueError("Time information should be increasing")
-        self._df = value[influent_state_cols] # Reorder
+        self._df = value[influent_state_cols]  # Reorder
 
     def save(self, path):
         """Save DigesterFeed object to a .csv file"""
@@ -121,6 +122,7 @@ class Feed:
         feed_before = self._df.iloc[cond]
         feed_after = self._df.iloc[~cond]
         return (Feed(feed_before), Feed(feed_after))
+
 
 def load_dig_feed(path) -> Feed:
     """

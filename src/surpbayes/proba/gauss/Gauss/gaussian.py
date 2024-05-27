@@ -157,7 +157,7 @@ class Gaussian(Proba):
         return self._sample_shape
 
     @sample_shape.setter
-    def sample_shape(self, value:tuple[int, ...]):
+    def sample_shape(self, value: tuple[int, ...]):
         self._updt_sample_shape(value)
 
     @property
@@ -213,10 +213,13 @@ class Gaussian(Proba):
         nsmeans = np.array(value)
         new_shape = nsmeans.shape
         if prod(new_shape) != self._sample_size:
-            msg = " ".join(["Proposed new means is not of adequate size", f"(expected {self._sample_size}, got shape ({new_shape}))"])
-            raise ValueError(
-                msg
+            msg = " ".join(
+                [
+                    "Proposed new means is not of adequate size",
+                    f"(expected {self._sample_size}, got shape ({new_shape}))",
+                ]
             )
+            raise ValueError(msg)
         self._means = nsmeans.flatten()
         self._updt_sample_shape(new_shape)
 

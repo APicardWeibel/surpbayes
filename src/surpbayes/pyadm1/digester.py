@@ -4,8 +4,12 @@ from typing import Optional
 import pandas as pd
 from surpbayes.pyadm1.basic_classes.dig_info import DigesterInformation
 from surpbayes.pyadm1.basic_classes.feed import Feed
-from surpbayes.pyadm1.basic_classes.obs import (DigesterState, DigesterStates,
-                                           NegativeStates, pred_col)
+from surpbayes.pyadm1.basic_classes.obs import (
+    DigesterState,
+    DigesterStates,
+    NegativeStates,
+    pred_col,
+)
 from surpbayes.pyadm1.basic_classes.parameter import ADM1Param
 from surpbayes.pyadm1.model.run_adm1 import run_adm1
 from surpbayes.pyadm1.prediction_error import adm1_err
@@ -13,6 +17,7 @@ from surpbayes.pyadm1.prediction_error import adm1_err
 
 class ADM1Failure(Warning):
     """Warning class when ADM1 computations failed"""
+
 
 pred_names = [
     "S_va",
@@ -26,6 +31,7 @@ pred_names = [
     "p_co2",
 ]
 
+
 class Digester:
     def __init__(
         self,
@@ -38,7 +44,6 @@ class Digester:
         self.feed = feed
         self.ini_state = ini_state
         self.obs = obs
-
 
     @property
     def dig_info(self):
@@ -93,10 +98,10 @@ class Digester:
         solver_method: str = "LSODA",
         max_step: float = 60.0 / (24.0 * 60.0),
         min_step: float = 10**-6,
-        **kwargs
+        **kwargs,
     ) -> DigesterStates:
 
-        out =  run_adm1(
+        out = run_adm1(
             influent_state=self._np_feed,
             initial_state=self._np_ini_state,
             V_liq=self._dig_info.V_liq,
@@ -107,22 +112,22 @@ class Digester:
             solver_method=solver_method,
             max_step=max_step,
             min_step=min_step,
-            **kwargs
+            **kwargs,
         )
-        return DigesterStates(pd.DataFrame(out, columns = pred_col))
+        return DigesterStates(pd.DataFrame(out, columns=pred_col))
 
     def score(
         self,
         param: ADM1Param,
-        solver_method :str = "LSODA",
+        solver_method: str = "LSODA",
         max_step: float = 60.0 / (24.0 * 60.0),
         min_step: float = 10**-6,
         # Score arguments
-        eps:float = 10** -8,
+        eps: float = 10**-8,
         max_score: float = 3.0,
         elbow: float = 2.0,
         silent: bool = True,
-        **kwargs
+        **kwargs,
     ):
         try:
             pred = self.simulate(
@@ -130,10 +135,12 @@ class Digester:
                 solver_method=solver_method,
                 max_step=max_step,
                 min_step=min_step,
-                **kwargs
+                **kwargs,
             )
 
-            return adm1_err(pred = pred, obs = self.obs, eps=eps, max_score=max_score, elbow=elbow)
+            return adm1_err(
+                pred=pred, obs=self.obs, eps=eps, max_score=max_score, elbow=elbow
+            )
         except (RuntimeWarning, UserWarning, NegativeStates, ZeroDivisionError) as exc:
             if not silent:
                 warnings.warn(
@@ -141,4 +148,3 @@ class Digester:
                     category=ADM1Failure,
                 )
             return max_score
-

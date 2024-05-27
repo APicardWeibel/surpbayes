@@ -2,8 +2,12 @@
 import os
 
 import numpy as np
-from surpbayes.pyadm1.basic_classes import (load_dig_feed, load_dig_info,
-                                            load_dig_state, load_dig_states)
+from surpbayes.pyadm1.basic_classes import (
+    load_dig_feed,
+    load_dig_info,
+    load_dig_state,
+    load_dig_states,
+)
 from surpbayes.pyadm1.digester import Digester
 from surpbayes.pyadm1.proba import Interface, prior_param, proba_map
 from surpbayes.types import ProbaParam
@@ -24,7 +28,7 @@ save_path = os.path.join(loc_path, "..", "exp_results", "optim", "SurPAC")
 os.makedirs(save_path, exist_ok=True)
 
 # Read digester daga
-feed = load_dig_feed(os.path.join(data_path,"train_data/feed.csv")) 
+feed = load_dig_feed(os.path.join(data_path, "train_data/feed.csv"))
 ini_state = load_dig_state(os.path.join(data_path, "train_data/init_state.json"))
 obs = load_dig_states(os.path.join(data_path, "train_data/obs.csv"))
 dig_info = load_dig_info(os.path.join(data_path, "dig_info.json"))
@@ -34,9 +38,7 @@ dig = Digester(dig_info, feed, ini_state, obs)
 interface = Interface(dig, temperature, prior_param=prior_param)
 
 
-def eval_results(
-    post_params:list[ProbaParam]
-)->np.ndarray:
+def eval_results(post_params: list[ProbaParam]) -> np.ndarray:
     """Evaluate a posterior evaluating new parameters"""
     perfs = np.zeros(len(post_params))
 
@@ -45,29 +47,37 @@ def eval_results(
         samples = proba_map(post_param)(n_eval)
         mean_score = np.mean(interface.mult_score(samples))
 
-        perfs[i] = mean_score + interface.temperature * proba_map.kl(post_param, prior_param)
+        perfs[i] = mean_score + interface.temperature * proba_map.kl(
+            post_param, prior_param
+        )
     return perfs
 
 
-# Main call 
+# Main call
 results = []
 for i in range(20):
     per_step = [160] + [32] * 295
     opt_res = interface.bayes_calibration(
         optimizer="score_approx",
-        n_estim_weights=4*10**4,
+        n_estim_weights=4 * 10**4,
         kl_max=1.0,
         dampen=0.5,
         chain_length=len(per_step),
         per_step=per_step,
-        kltol=0.0, # Force complete
+        kltol=0.0,  # Force complete
         m_max=25,
-        )
+    )
     params = np.asarray(opt_res.hist_param)
 
     print("Re evaluating score evolution (this can be long)")
     # Speed up by evaluating only part of the indexes
-    evals_index = list(range(5)) + list(range(5, 30, 5)) + list(range(50, 100, 10)) + list(range(100, 300, 25)) + [-1]
+    evals_index = (
+        list(range(5))
+        + list(range(5, 30, 5))
+        + list(range(50, 100, 10))
+        + list(range(100, 300, 25))
+        + [-1]
+    )
     params_to_eval = [opt_res.hist_param[i] for i in evals_index]
 
     score_evol = eval_results(params_to_eval)

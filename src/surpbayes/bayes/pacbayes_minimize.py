@@ -7,19 +7,17 @@ from typing import Callable, Optional, Type, Union
 
 import numpy as np
 from surpbayes.bayes.bayes_solver import BayesSolver
-from surpbayes.bayes.gradient_based import (GradientBasedBayesSolver,
-                                            KNNBayesSolver)
+from surpbayes.bayes.gradient_based import GradientBasedBayesSolver, KNNBayesSolver
 from surpbayes.bayes.optim_result_bayes import OptimResultBayes
-from surpbayes.bayes.surpac import (GaussianSPACS, PreExpSPACS,
-                                          SurPACSolver)
+from surpbayes.bayes.surpac import GaussianSPACS, PreExpSPACS, SurPACSolver
 from surpbayes.proba import ProbaMap
 from surpbayes.types import ProbaParam
 
 set_pac_bayes_solver = {
     "corr_weights",
     "knn",
-    "SurPAC-CE", 
-    "score_approx", # old name for SurPAC-CE, still used as reference until mod
+    "SurPAC-CE",
+    "score_approx",  # old name for SurPAC-CE, still used as reference until mod
     "score_approx_gauss",
     "score_approx_pre_exp",
     "score_approx_exp",
@@ -27,7 +25,8 @@ set_pac_bayes_solver = {
 
 
 def infer_pb_routine(
-    proba_map: ProbaMap, pac_bayes_solver: Optional[Union[str, Type[BayesSolver]]] = None
+    proba_map: ProbaMap,
+    pac_bayes_solver: Optional[Union[str, Type[BayesSolver]]] = None,
 ) -> Type[BayesSolver]:
     """Infer which pac_bayes_solver from 'proba_map' and 'pac_bayes_solver' arguments.
 
@@ -40,7 +39,11 @@ def infer_pb_routine(
         If 'score_approx', checks the appropriate version of 'score_approx' depending on the
         'proba_map' passed.
     """
-    if (pac_bayes_solver is None) or (pac_bayes_solver == "score_approx") or (pac_bayes_solver == "SurPAC-CE"):
+    if (
+        (pac_bayes_solver is None)
+        or (pac_bayes_solver == "score_approx")
+        or (pac_bayes_solver == "SurPAC-CE")
+    ):
         if proba_map.map_type == "Gaussian":
             return GaussianSPACS
         if proba_map.map_type == "PreExpFamily":
@@ -99,7 +102,7 @@ def pacbayes_minimize(
     vectorized: bool = False,
     **kwargs,
 ) -> OptimResultBayes:
-    """ Perform the minimization of Catoni's PAC-Bayes bound.
+    """Perform the minimization of Catoni's PAC-Bayes bound.
     Method used to perform the minimisation can be user specified or
     inferred from the type of proba_map.
 

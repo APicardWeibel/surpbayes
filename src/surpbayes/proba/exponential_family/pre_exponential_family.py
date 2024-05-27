@@ -43,6 +43,7 @@ class PreExpFamily(ProbaMap):
     In the case where the probability map is not injective, T_to_param should map to any parameter
     outputing the distribution.
     """
+
     # Indicate that this is a ExponentialFamily object
     map_type = "PreExpFamily"
 
@@ -120,14 +121,15 @@ class PreExpFamily(ProbaMap):
         self,
         param_1: ProbaParam,
         param_0: ProbaParam,
-        n_sample: int = 1000,):
+        n_sample: int = 1000,
+    ):
 
         # Check if exponential family kl expression can be used
         if (self.g is None) or (self.der_g is None):
             return super().kl(param_1, param_0, n_sample)
 
         # Use closed form expression by default
-        
+
         ppar1, ppar0 = np.asarray(param_1), np.asarray(param_0)
 
         #  Check if params are identical
@@ -145,7 +147,8 @@ class PreExpFamily(ProbaMap):
         )
         if kl_out < 0.0:
             warnings.warn(
-                f"Found negative kl ({kl_out}). Returning 0.0", category=NegativeKLWarning
+                f"Found negative kl ({kl_out}). Returning 0.0",
+                category=NegativeKLWarning,
             )
             kl_out = 0.0
         return kl_out
@@ -244,7 +247,7 @@ class PreExpFamily(ProbaMap):
 class TransformedPreExpFamily(PreExpFamily):
     """
     Class for transformed PreExpFamily. Reimplementations of kl and its derivatives are preserved
-    
+
     Incentive:
         While the ExponentialFamily class uses the natural definition of the KL divergence using
         the gradient of the normalisation function, since the PreExpFamily uses a different

@@ -8,12 +8,17 @@ from typing import Callable, Optional
 import numpy as np
 from surpbayes.misc import _get_pre_shape, prod
 from surpbayes.proba._helper import _shape_info
-from surpbayes.proba.exponential_family.pre_exponential_family import \
-    PreExpFamily
+from surpbayes.proba.exponential_family.pre_exponential_family import PreExpFamily
 from surpbayes.proba.gauss.Gauss.gaussian import Gaussian
-from surpbayes.proba.gauss.Gauss.nb_helper import (_der_g, _g, _grad_kl,
-                                                   _grad_right_kl, _kl,
-                                                   _T_to_param, make_cov)
+from surpbayes.proba.gauss.Gauss.nb_helper import (
+    _der_g,
+    _g,
+    _grad_kl,
+    _grad_right_kl,
+    _kl,
+    _T_to_param,
+    make_cov,
+)
 from surpbayes.proba.warnings import ShapeWarning
 from surpbayes.types import ProbaParam, Samples
 
@@ -85,7 +90,7 @@ def exp_family_gauss(
     ..math::
         (x, -.5 x^2, -(x_i x_j)_{i>j})
 
-    Then 
+    Then
     ..math::
         A \cdot T(x)  = - .5 \tilde{A} .x x^t + A_0^t x
          = - .5 x^t \tilde{A} x + A_0^t \tilde{A}^{-1} \tilde{A} x

@@ -19,8 +19,7 @@ import numpy as np
 from scipy.special import digamma, gamma, polygamma
 from surpbayes.proba._errors import RenormError
 from surpbayes.proba._helper import prod
-from surpbayes.proba.exponential_family.exponential_family import \
-    ExponentialFamily
+from surpbayes.proba.exponential_family.exponential_family import ExponentialFamily
 from surpbayes.types import ProbaParam, Samples
 
 

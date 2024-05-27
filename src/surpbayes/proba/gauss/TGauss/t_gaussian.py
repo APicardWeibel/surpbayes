@@ -117,7 +117,7 @@ class TensorizedGaussian(Proba):
     def sample_shape(self, value):
         self._updt_sample_shape(sample_shape=value)
 
-    def _updt_sample_shape(self, sample_shape:Optional[tuple[int, ...]]):
+    def _updt_sample_shape(self, sample_shape: Optional[tuple[int, ...]]):
         """Update sample shape safely.
         If passed sample_shape is None, pass"""
         if sample_shape is None:
@@ -134,7 +134,7 @@ class TensorizedGaussian(Proba):
         self._shaped_means = self._means.reshape(self._sample_shape)
         self._n_dim_shape = len(self._sample_shape)
 
-    def _updt_devs(self, devs:np.ndarray)->None:
+    def _updt_devs(self, devs: np.ndarray) -> None:
         """Update standard deviations and related fields"""
         devs_arr = np.array(devs).flatten()
         if len(devs_arr) != self._sample_size:

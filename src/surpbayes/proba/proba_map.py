@@ -13,8 +13,14 @@ import warnings
 from typing import Callable, Optional, Sequence, Tuple, Union, overload
 
 import numpy as np
-from surpbayes.misc import (_get_pre_shape, blab, interpretation, par_eval,
-                            post_modif, prod)
+from surpbayes.misc import (
+    _get_pre_shape,
+    blab,
+    interpretation,
+    par_eval,
+    post_modif,
+    prod,
+)
 from surpbayes.proba.proba import Proba, tensorize
 from surpbayes.proba.warnings import NegativeKLWarning
 from surpbayes.types import ProbaParam, ProbaParams, SamplePoint, Samples
@@ -108,7 +114,7 @@ class ProbaMap:  # pylint: disable=R0902
                 proba = prob_map(ref_param)
                 # Check if that distribution can generate samples
                 proba(1)
-            except : # pylint: disable=W0702
+            except:  # pylint: disable=W0702
                 warnings.warn("Could not infer ref_param")
 
         self._proba_param_shape = proba_param_shape
@@ -296,7 +302,7 @@ class ProbaMap:  # pylint: disable=R0902
 
         Output:
             :math:`D_f(proba_1, proba_0)` approximated as
-            :math:`\sum_i(f(proba_1(\phi_i)/proba_0(\phi_i))` with :math:`\phi_i` sampled 
+            :math:`\sum_i(f(proba_1(\phi_i)/proba_0(\phi_i))` with :math:`\phi_i` sampled
             through proba_0.gen (typically i.i.d.)
 
         Note:

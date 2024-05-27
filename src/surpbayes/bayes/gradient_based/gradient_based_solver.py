@@ -11,8 +11,7 @@ from scipy.stats import norm
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.bayes.bayes_solver import BayesSolver
 from surpbayes.bayes.gradient_based.accu_sample_dens import AccuSampleValDens
-from surpbayes.bayes.gradient_based.optim_result_bayes_gb import \
-    OptimResultBayesGB
+from surpbayes.bayes.gradient_based.optim_result_bayes_gb import OptimResultBayesGB
 from surpbayes.bayes.hist_bayes import HistBayesLog
 from surpbayes.misc import blab, par_eval, prod
 from surpbayes.proba import Proba, ProbaMap
@@ -49,6 +48,7 @@ class GDBayesSolver(BayesSolver):
     This class works for all types of ProbaMap and is used as the default implementation
     for all non exponential family ProbaMap.
     """
+
     def __init__(
         self,
         fun: Callable[[np.ndarray], float],
@@ -131,19 +131,20 @@ class GDBayesSolver(BayesSolver):
 
         der_log = self.proba_map.log_dens_der(self.post_param)
         grads = der_log(samples)
-        grad_expct = np.tensordot((vals - mval), grads, (0,0)) / n_step
-
+        grad_expct = np.tensordot((vals - mval), grads, (0, 0)) / n_step
 
         grad_kl, kl = self.grad_kl(self._post_param, self.n_grad_kl)
 
-        step = - self.eta * (grad_expct + self.temperature * grad_kl)
+        step = -self.eta * (grad_expct + self.temperature * grad_kl)
         pbayes_obj = mval + self.temperature * kl
-        self.hist_log.add1(proba_par=self._post_param, score=pbayes_obj, KL=kl, mean=mval)
+        self.hist_log.add1(
+            proba_par=self._post_param, score=pbayes_obj, KL=kl, mean=mval
+        )
 
         new_post_param = self._post_param + step
         self.check_convergence(new_post_param)
         self.post_param = new_post_param
-        
+
         self.count += 1
         self.msg_end_step()
 
@@ -156,7 +157,6 @@ class GDBayesSolver(BayesSolver):
     def optimize(self) -> None:
         self.msg_begin_calib()
         return super().optimize()
-
 
 
 class GradientBasedBayesSolver(GDBayesSolver):
@@ -208,7 +208,7 @@ class GradientBasedBayesSolver(GDBayesSolver):
             temperature=temperature,
             prev_eval=prev_eval,
             index_train=index_train,
-            eta=eta * (1- momentum),
+            eta=eta * (1 - momentum),
             chain_length=chain_length,
             per_step=per_step,
             kltol=kltol,
@@ -230,14 +230,13 @@ class GradientBasedBayesSolver(GDBayesSolver):
         self.prev_score = np.inf
         self.bin_log = HistBayesLog(proba_map, n=chain_length)
         self.all_log_bayes = HistBayesLog(proba_map, n=chain_length)
-        
+
         self.k = k
         self.corr_eta = corr_eta
         self.gen_decay = gen_decay
 
         # Back up if too many ProbaBadGrad
         self.ini_post_param = self._post_param.copy()
-
 
     def msg_begin_calib(self) -> None:
         blab(
@@ -261,7 +260,9 @@ class GradientBasedBayesSolver(GDBayesSolver):
 
             self.accu.extend_memory(sum(self.per_step))
 
-        self.stable_accu = AccuSampleVal(sample_shape=self.proba_map.sample_shape, n_tot=sum(self.per_step))
+        self.stable_accu = AccuSampleVal(
+            sample_shape=self.proba_map.sample_shape, n_tot=sum(self.per_step)
+        )
 
     def gen_sample(self) -> None:
 

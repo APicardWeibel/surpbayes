@@ -17,6 +17,7 @@ package loading can uncomment the numba signatures and numba imports
 
 # import numba as nb
 import numpy as np
+
 # import surpbayes.nb_typ as nbt
 from surpbayes.proba._errors import RenormError
 from surpbayes.proba.gauss.Gauss.nb_helper import _kl, make_cov
@@ -99,7 +100,9 @@ def _pre_der_g(loc_par: np.ndarray, good_index: np.ndarray, sample_size: int):
 
 
 # @nb.njit(nbt.f1D(nbt.f1D, nbt.f1D, nbt.i1D, nbt.i1D))
-def _block_kl(param_1: np.ndarray, param_0: np.ndarray, ds: np.ndarray, cuts: np.ndarray):
+def _block_kl(
+    param_1: np.ndarray, param_0: np.ndarray, ds: np.ndarray, cuts: np.ndarray
+):
     """
     Computes the Kullback Leibler divergence between two Block diagonal
     gaussian distributions defined by their meta parameters.

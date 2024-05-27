@@ -8,8 +8,12 @@ from typing import Optional
 import dill
 import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes import (AccuSampleValDens, AccuSampleValExp,
-                             infer_pb_routine, pacbayes_minimize)
+from surpbayes.bayes import (
+    AccuSampleValDens,
+    AccuSampleValExp,
+    infer_pb_routine,
+    pacbayes_minimize,
+)
 from surpbayes.meta_bayes.hist_meta import HistMeta
 from surpbayes.meta_bayes.task import Task
 from surpbayes.misc import blab, prod
@@ -24,9 +28,9 @@ def _solve_in_kl(
     direction: np.ndarray,
     kl_max: float,
     alpha_max: float,
-    y_pres:Optional[float]=None,
-    x_pres:Optional[float]=None,
-    m_max:int=100,
+    y_pres: Optional[float] = None,
+    x_pres: Optional[float] = None,
+    m_max: int = 100,
 ) -> float:
     """
     Find largest alpha < alpha_max such that kl(prior_param + alpha *dir, prior_param) < kl_max
@@ -328,15 +332,15 @@ class MetaLearningEnv:
             return np.zeros(self.proba_map.t_shape)
         return np.zeros(self.proba_map.proba_param_shape)
 
-    def _get_eta_use(self, grad:np.ndarray, kl_max:float, eta_loc:float)->float:
+    def _get_eta_use(self, grad: np.ndarray, kl_max: float, eta_loc: float) -> float:
         if self.work_in_t:
-            return  _solve_in_kl_pre_exp(
+            return _solve_in_kl_pre_exp(
                 proba_map=self.proba_map,
                 prior_param=self.prior_param,
                 direction=grad,
                 kl_max=kl_max,
                 alpha_max=eta_loc,
-                )
+            )
         return _solve_in_kl(
             proba_map=self.proba_map,
             prior_param=self.prior_param,
@@ -344,15 +348,17 @@ class MetaLearningEnv:
             kl_max=kl_max,
             alpha_max=eta_loc,
         )
-    
-    def _get_new_prior_param(self, eta_use:float, grad:np.ndarray)->ProbaParam:
+
+    def _get_new_prior_param(self, eta_use: float, grad: np.ndarray) -> ProbaParam:
         if self.work_in_t:
             return self.proba_map.T_to_param(
-                    self.proba_map.param_to_T(self.prior_param) + eta_use * grad
-                )
+                self.proba_map.param_to_T(self.prior_param) + eta_use * grad
+            )
         return self.prior_param + eta_use * grad
 
-    def meta_learn(self, epochs=1, eta=0.01, kl_max=1.0, mini_batch_size=10, silent=False) -> None:
+    def meta_learn(
+        self, epochs=1, eta=0.01, kl_max=1.0, mini_batch_size=10, silent=False
+    ) -> None:
         """Meta Learning algorithm
 
         Args:
@@ -370,12 +376,16 @@ class MetaLearningEnv:
         self.hist_meta.extend_memory(epochs)
 
         # Extend memory for tasks (once and for all rather than iteratively)
-        [self._extend_memo(task, epochs) for task in self.list_task]  # pylint: disable = W0106
+        [
+            self._extend_memo(task, epochs) for task in self.list_task
+        ]  # pylint: disable = W0106
 
         # Define step size
         eta_loc = eta / self.n_task
 
-        batch_count = (self.n_task // mini_batch_size) + ((self.n_task % mini_batch_size) > 0)
+        batch_count = (self.n_task // mini_batch_size) + (
+            (self.n_task % mini_batch_size) > 0
+        )
         # Main learning loop
         for i in range(epochs):
             blab(silent, f"Iteration {i+1}/{epochs}")
@@ -387,16 +397,21 @@ class MetaLearningEnv:
                 blab(silent, f"Starting minibatch {n_batch + 1}")
                 grad = self._init_grad()
                 start = mini_batch_size * n_batch
-                iloc_task_s = permut[start:(start + mini_batch_size)]
+                iloc_task_s = permut[start : (start + mini_batch_size)]
                 for j, iloc_task in enumerate(iloc_task_s):
 
                     task = self.list_task[iloc_task]
-                    blab(silent, f"Starting task {iloc_task} ({start+j+1}/{self.n_task})")
+                    blab(
+                        silent, f"Starting task {iloc_task} ({start+j+1}/{self.n_task})"
+                    )
                     grad = grad - self.grad_meta(task)
                     self.task_score[iloc_task] = task.end_score
 
-                blab(silent, f"Minibatch {n_batch + 1} avg score: {self.task_score[iloc_task_s].mean()}")
-             
+                blab(
+                    silent,
+                    f"Minibatch {n_batch + 1} avg score: {self.task_score[iloc_task_s].mean()}",
+                )
+
                 eta_use = self._get_eta_use(grad, kl_max, eta_loc)
                 self.prior_param = self._get_new_prior_param(eta_use, grad)
 
@@ -408,10 +423,7 @@ class MetaLearningEnv:
 
             blab(silent, f"Meta score: {self.meta_score}\n")
 
-
-    def _extend_memo(
-            self, task:Task, epochs:int
-    ):
+    def _extend_memo(self, task: Task, epochs: int):
         """Extend memory of accu for a task depending on hyperparameters and number
         of epochs"""
         n_remain = task.accu_sample_val.n_remain()  # type: ignore
@@ -419,7 +431,7 @@ class MetaLearningEnv:
         if isinstance(per_step, int):
             chain_length = self.hyperparams.get("chain_length", 10)
             n_fill = epochs * self.hyperparams["per_step"] * chain_length
-            
+
         elif isinstance(per_step, list):
             chain_length = self.hyperparams.get("chain_length", None)
             if chain_length is None:
@@ -428,10 +440,9 @@ class MetaLearningEnv:
                 n_fill = epochs * np.sum(per_step[:chain_length])
         else:
             # Could not extend, this will be done at each task call
-            return 
+            return
         if n_fill < n_remain:
             task.accu_sample_val.extend_memory(n_fill - n_remain)  # type: ignore
-
 
     def meta_learn_batch(
         self, epochs=1, eta=0.01, kl_tol=10**-3, kl_max=1.0, silent=False
@@ -456,7 +467,9 @@ class MetaLearningEnv:
         self.hist_meta.extend_memory(epochs)
 
         # Iterate extend memory over tasks
-        [self._extend_memo(task, epochs) for task in self.list_task]  # pylint:disable=W0106
+        [
+            self._extend_memo(task, epochs) for task in self.list_task
+        ]  # pylint:disable=W0106
 
         # Define step size
         eta_loc = eta / self.n_task

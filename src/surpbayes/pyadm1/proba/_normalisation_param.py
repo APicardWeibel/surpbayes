@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 
 parameter_list = [
-    "k_dis", # Day-1
-    "k_hyd_ch", # Day-1
+    "k_dis",  # Day-1
+    "k_hyd_ch",  # Day-1
     "k_hyd_pr",  # Day-1
     "k_hyd_li",  # Day-1
     "k_m_su",  # Day-1
@@ -37,7 +37,7 @@ parameter_list = [
     "pH_LL_h2",  # pH unit
 ]
 
-parameter_dict = {name:i for i, name in enumerate(parameter_list)}
+parameter_dict = {name: i for i, name in enumerate(parameter_list)}
 
 
 # Taken from Rosen & Jeppsson

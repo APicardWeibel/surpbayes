@@ -10,8 +10,12 @@ inherited)
 - SurPACSolver
 """
 from .bayes_solver import BayesSolver
-from .gradient_based import (AccuSampleValDens, GradientBasedBayesSolver,
-                             KNNBayesSolver, OptimResultBayesGB)
+from .gradient_based import (
+    AccuSampleValDens,
+    GradientBasedBayesSolver,
+    KNNBayesSolver,
+    OptimResultBayesGB,
+)
 from .hist_bayes import HistBayesLog, load_hist_bayes
 from .optim_result_bayes import OptimResultBayes
 from .pacbayes_minimize import infer_pb_routine, pacbayes_minimize

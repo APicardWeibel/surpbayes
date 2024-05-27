@@ -8,8 +8,7 @@ import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
 from surpbayes.bayes.bayes_solver import BayesSolver
 from surpbayes.bayes.optim_result_bayes import OptimResultBayes
-from surpbayes.bayes.surpac.accu_sample_exp import (AccuSampleValExp,
-                                                    _add_T_data)
+from surpbayes.bayes.surpac.accu_sample_exp import AccuSampleValExp, _add_T_data
 from surpbayes.bayes.surpac.weighing import get_weights_mc
 from surpbayes.misc import blab, prod
 from surpbayes.optim import dichoto

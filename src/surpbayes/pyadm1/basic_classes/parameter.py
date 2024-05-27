@@ -868,6 +868,7 @@ class ADM1Param:
     def save(self, path):
         pd.Series(self._param).to_json(path, orient="index")
 
+
 def check_param(param: dict, tol_stoichio: float = 10**-8) -> None:
 
     err_msg = []
@@ -925,6 +926,7 @@ def check_param(param: dict, tol_stoichio: float = 10**-8) -> None:
     if err_msg:
         err_str = "Invalid parameter:\n" + "\n".join(err_msg)
         raise ValueError(err_str)
+
 
 def load_dig_param(path: str) -> ADM1Param:
     """

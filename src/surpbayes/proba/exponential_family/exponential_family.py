@@ -37,15 +37,16 @@ from surpbayes.types import ProbaParam, Samples
 
 
 def normalised_check(g: Callable[[ProbaParam], float]) -> Callable[[ProbaParam], float]:
-    r""" Decorator for log renormalisation functions, changing failure behavior (infinite,
+    r"""Decorator for log renormalisation functions, changing failure behavior (infinite,
     exception) to raising RenormError exception.
-    
+
     Arg:
         g: the log renormalisation function
     return:
         fun: modified log renormalisation function, raising RenormError if g(proba_par) raises
             an exception or is infinite, and is not returns g(proba_par)
     """
+
     def fun(proba_param: ProbaParam):
         try:
             out = g(proba_param)

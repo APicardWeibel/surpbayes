@@ -21,6 +21,7 @@ from math import log, pi
 
 # import numba as nb
 import numpy as np
+
 # import surpbayes.nb_typ as nbt
 from surpbayes.proba._errors import RenormError
 
@@ -38,9 +39,7 @@ def _T_to_param(
     H = H + H.T + np.diag(t_val[sample_size : (2 * sample_size)])  # type: ignore
 
     # Compute center
-    center = (
-        np.linalg.inv(H) @ t_val[:sample_size]
-    ) 
+    center = np.linalg.inv(H) @ t_val[:sample_size]
 
     vals, vects = np.linalg.eigh(H)
     if vals[0] < 0:
@@ -92,9 +91,7 @@ def _der_g_mu_M(mu: np.ndarray, M: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 
 # @nb.njit(nbt.f1D(nbt.f1D, nbt.i, nbt.i1D))
-def _der_g(
-    t_par: np.ndarray, sample_size: int, good_indexes: np.ndarray
-) -> np.ndarray:
+def _der_g(t_par: np.ndarray, sample_size: int, good_indexes: np.ndarray) -> np.ndarray:
     mu, M = par_to_mu_M(t_par, sample_size=sample_size, good_indexes=good_indexes)
     d_g_mu, d_g_M = _der_g_mu_M(mu, M)
     d_par = np.zeros(t_par.shape)
@@ -107,10 +104,11 @@ def _der_g(
 # with warnings.catch_warnings():
 #     warnings.simplefilter("ignore", category=nb.NumbaPerformanceWarning)
 
-    # @nb.njit(nbt.f2D(nbt.f2Dru))
+# @nb.njit(nbt.f2D(nbt.f2Dru))
 def make_cov(pre_cov: np.ndarray) -> np.ndarray:
     """Convert encoding of covariance to covariance. Used for GaussianMap"""
     return pre_cov @ pre_cov.T
+
 
 # @nb.njit(nbt.f(nbt.f2D, nbt.f2D, nbt.i))
 def _kl(par1: np.ndarray, par0: np.ndarray, dim: int):
@@ -141,6 +139,7 @@ def _kl(par1: np.ndarray, par0: np.ndarray, dim: int):
 
     kl = kl + np.sum(delta * (inv_cov0 @ delta))
     return kl / 2
+
 
 # @nb.njit(nbt.Tuple((nbt.f2D, nbt.f))(nbt.f2D, nbt.f1D, nbt.f2D, nbt.i, nbt.f2D))
 def _grad_kl(
@@ -188,6 +187,7 @@ def _grad_kl(
     kl = kl + np.sum(delta * (inv_cov_0 @ delta))
 
     return der, kl / 2
+
 
 # @nb.njit(nbt.Tuple((nbt.f2D, nbt.f))(nbt.f2D, nbt.f1D, nbt.f2D, nbt.i, nbt.f2D))
 def _grad_right_kl(

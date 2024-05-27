@@ -44,7 +44,9 @@ def plot_weight_per_gen(
     return plot
 
 
-def plot_weights_per_gen(opt_res: OptimResultBayes, n_sample_estim_weight: int = 10**5):
+def plot_weights_per_gen(
+    opt_res: OptimResultBayes, n_sample_estim_weight: int = 10**5
+):
     proba_map = opt_res.log_bayes.proba_map
     is_gauss = proba_map.map_type == "Gaussian"
     proba = proba_map(opt_res.opti_param)

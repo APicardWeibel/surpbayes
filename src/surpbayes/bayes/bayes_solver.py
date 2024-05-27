@@ -10,6 +10,7 @@ from surpbayes.misc import blab, prod
 from surpbayes.proba import ProbaMap
 from surpbayes.types import ProbaParam
 
+
 class BayesSolver:
     r"""
     Main class for PAC-Bayes objective minimisation.
@@ -57,7 +58,7 @@ class BayesSolver:
         self.vectorized = vectorized
 
         if self.parallel:
-            self.pool = Pool() # pylint: disable=E1102
+            self.pool = Pool()  # pylint: disable=E1102
         else:
             self.pool = None
 

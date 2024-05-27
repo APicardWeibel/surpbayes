@@ -15,5 +15,9 @@ The goal of the present module is to compute weights :math:`(\omega_i)`, such th
 for all function g.
 """
 
-from .monte_carlo import (get_weights_mc, get_weights_mc_approx,
-                          get_weights_mc_approx_gauss, get_weights_mc_gauss)
+from .monte_carlo import (
+    get_weights_mc,
+    get_weights_mc_approx,
+    get_weights_mc_approx_gauss,
+    get_weights_mc_gauss,
+)

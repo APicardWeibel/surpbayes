@@ -7,6 +7,7 @@ from surpbayes.pyadm1.basic_classes.cod_vs_conv import COD_VS
 class NegativeStates(ValueError):
     """Error for when negative values are passed to states"""
 
+
 pred_col = [
     "time",
     "S_su",
@@ -103,9 +104,10 @@ predict_units_dict = {
     "VSR": "ratio",
 }
 
-pred_col_dict = {name:i for i, name in enumerate(pred_col)}
+pred_col_dict = {name: i for i, name in enumerate(pred_col)}
 
 cod_vs_dig_states_cols = [pred_col_dict[x] for x in COD_VS.keys()]
+
 
 class DigesterStates:
     def __init__(self, df: pd.DataFrame):
@@ -179,10 +181,13 @@ class DigesterStates:
     def get_state(self, index):
         return DigesterState(self._df.iloc[index])
 
+
 def load_dig_states(path) -> DigesterStates:
     return DigesterStates(pd.read_csv(path))
 
+
 ode_state_col = pred_col[1:37]
+
 
 class DigesterState:
     def __init__(self, state: pd.Series):
@@ -193,7 +198,7 @@ class DigesterState:
         return self._df.to_numpy()
 
     @property
-    def df(self)->pd.Series:
+    def df(self) -> pd.Series:
         """Panda dataframe representation of the data"""
         return self._df
 
@@ -217,15 +222,14 @@ class DigesterState:
         self._df = value[pred_col]
 
     @property
-    def t0(self)->float:
+    def t0(self) -> float:
         """Initial date"""
         return self.df["time"]
 
     @property
-    def ode_state(self)->np.ndarray:
+    def ode_state(self) -> np.ndarray:
         """State as used for ODE solver in run_adm1"""
         return self.df[ode_state_col].to_numpy()
-
 
 
 def load_dig_state(path) -> DigesterState:

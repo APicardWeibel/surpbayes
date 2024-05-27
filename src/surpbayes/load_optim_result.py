@@ -16,8 +16,7 @@ import os
 import dill
 import numpy as np
 
-from surpbayes.bayes import (OptimResultBayes, OptimResultBayesGB,
-                             load_hist_bayes)
+from surpbayes.bayes import OptimResultBayes, OptimResultBayesGB, load_hist_bayes
 from surpbayes.load_accu import load_accu_sample_val
 from surpbayes.optim import OptimResult, OptimResultCMA
 

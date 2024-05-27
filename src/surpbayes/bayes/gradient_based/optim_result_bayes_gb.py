@@ -55,5 +55,7 @@ class OptimResultBayesGB(OptimResultBayes):
         acc_path = super().save(name, path, overwrite=overwrite)
 
         # Saving additional attributes
-        (self._bin_log_bayes).save(name="bin_log_bayes", path=acc_path, overwrite=overwrite)
+        (self._bin_log_bayes).save(
+            name="bin_log_bayes", path=acc_path, overwrite=overwrite
+        )
         return acc_path

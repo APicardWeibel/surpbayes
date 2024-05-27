@@ -2,8 +2,9 @@ from typing import Callable, Optional, Union
 
 import numpy as np
 from surpbayes.accu_xy import AccuSampleVal
-from surpbayes.bayes.gradient_based.gradient_based_solver import \
-    GradientBasedBayesSolver
+from surpbayes.bayes.gradient_based.gradient_based_solver import (
+    GradientBasedBayesSolver,
+)
 from surpbayes.misc import blab, par_eval
 from surpbayes.proba import ProbaMap
 from surpbayes.types import ProbaParam, SamplePoint, Samples
@@ -102,8 +103,8 @@ class KNNBayesSolver(GradientBasedBayesSolver):
         # Store new sample
         self.accu.add(sample, vals)  # type: ignore
 
-    def check_bad_grad(self, pbayes_obj:float, score_UQ:float):
-        """ Check if Bad gradient"""
+    def check_bad_grad(self, pbayes_obj: float, score_UQ: float):
+        """Check if Bad gradient"""
         is_bad = pbayes_obj > self.prev_score
         if is_bad:
             blab(

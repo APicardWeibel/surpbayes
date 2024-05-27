@@ -51,16 +51,17 @@ error_pred_names = [
     "q_gas",
     "q_ch4",
     "p_ch4",
-    "p_co2",]
+    "p_co2",
+]
 
 
 def adm1_err(
-    pred:DigesterStates,
-    obs:DigesterStates,
+    pred: DigesterStates,
+    obs: DigesterStates,
     eps: float = 10 ** (-8),
     max_score: float = 3.0,
     elbow: float = 2.0,
-    )->float:
+) -> float:
     """
     Compute the error as pseudo Root mean square of log residuals
 
@@ -78,10 +79,14 @@ def adm1_err(
         with t_i the number of non nan data for prediction type i, omega_i a renormalisation factor
         (by default 1). nan are ignored. The sum is performed only on pred_names
     """
-    res = np.log((pred.df[error_pred_names]+eps).to_numpy()/ (obs.df[error_pred_names]+eps).to_numpy())
+    res = np.log(
+        (pred.df[error_pred_names] + eps).to_numpy()
+        / (obs.df[error_pred_names] + eps).to_numpy()
+    )
     corr_res = soft_plus(res, max_val=max_score, elbow=elbow)  # type: ignore
 
     return np.sqrt(np.nanmean(corr_res**2))
+
 
 # def adm1_err(
 #     pred: DigesterStates,

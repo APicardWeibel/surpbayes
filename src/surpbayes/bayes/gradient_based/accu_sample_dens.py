@@ -143,7 +143,7 @@ class AccuSampleValDens(AccuSampleVal):
 
         where :math:`J_g` uses the sample :math:`S_g` from generation g generated from :math:`param_g`
         to estimate the mean through
-        ..math:: 
+        ..math::
             J_g(param) = \sum_{x \in S_g} score(x) \times \exp(log_dens(x, param) - log_dens(x, param_g)) / \lvert S_g \rvert
 
         The intuition being that if the distributions generating all parameters are similar, then
